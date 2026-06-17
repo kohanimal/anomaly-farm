@@ -24,7 +24,6 @@
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
          background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* ── Header ── */
   header { background: var(--green-dark); color: #fff; padding: 16px 20px 12px;
            position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
   header h1 { font-size: 18px; font-weight: 700; }
@@ -33,24 +32,20 @@
   .date-badge { background: rgba(255,255,255,.15); border-radius: 8px;
                 padding: 4px 10px; font-size: 13px; }
 
-  /* ── Nav tabs ── */
   nav { display: flex; background: var(--green-dark); border-top: 1px solid rgba(255,255,255,.1); }
   nav button { flex: 1; padding: 10px 4px; background: none; border: none; color: rgba(255,255,255,.6);
                font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
   nav button.active { color: #fff; border-bottom: 3px solid var(--amber); }
 
-  /* ── Pages ── */
   .page { display: none; padding: 16px; max-width: 500px; margin: 0 auto; }
   .page.active { display: block; }
 
-  /* ── Cards ── */
   .card { background: var(--white); border-radius: var(--radius); padding: 16px;
           box-shadow: var(--shadow); margin-bottom: 16px; }
   .card h2 { font-size: 15px; color: var(--green-dark); font-weight: 700;
              margin-bottom: 12px; border-bottom: 2px solid var(--green-light);
              padding-bottom: 8px; }
 
-  /* ── Product buttons ── */
   .product-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .product-btn { padding: 14px 8px; border: 2px solid var(--border); border-radius: var(--radius);
                  background: var(--white); cursor: pointer; text-align: center;
@@ -59,7 +54,6 @@
   .product-btn.selected { border-color: var(--green-mid); background: var(--green-pale); color: var(--green-dark); }
   .product-btn .emoji { font-size: 24px; display: block; margin-bottom: 4px; }
 
-  /* ── Form fields ── */
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 13px; font-weight: 600; color: var(--muted);
                  margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
@@ -68,16 +62,12 @@
     font-size: 16px; background: var(--white); color: var(--text);
     -webkit-appearance: none; appearance: none; transition: border-color .15s; }
   .field input:focus, .field select:focus { outline: none; border-color: var(--green-mid); }
-  .field .row { display: flex; gap: 10px; }
-  .field .row > * { flex: 1; }
 
-  /* ── Quick qty buttons ── */
   .qty-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
   .qty-chip { padding: 6px 14px; border: 2px solid var(--border); border-radius: 20px;
               background: var(--white); cursor: pointer; font-size: 14px; font-weight: 600; }
   .qty-chip:active { background: var(--green-pale); border-color: var(--green-mid); }
 
-  /* ── Submit button ── */
   .btn-primary { width: 100%; padding: 16px; background: var(--green-mid); color: #fff;
                  border: none; border-radius: var(--radius); font-size: 17px; font-weight: 700;
                  cursor: pointer; margin-top: 4px; transition: background .15s; }
@@ -88,14 +78,12 @@
   .btn-danger { background: #fff; color: var(--red); border: 2px solid var(--red);
                 border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
 
-  /* ── Toast ── */
   #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
            background: var(--green-dark); color: #fff; padding: 12px 24px; border-radius: 24px;
            font-weight: 600; font-size: 15px; transition: transform .3s; z-index: 999;
            white-space: nowrap; box-shadow: var(--shadow); pointer-events: none; }
   #toast.show { transform: translateX(-50%) translateY(0); }
 
-  /* ── Sales list ── */
   .sale-item { display: flex; align-items: center; gap: 10px; padding: 10px 0;
                border-bottom: 1px solid #eee; }
   .sale-item:last-child { border-bottom: none; }
@@ -107,43 +95,44 @@
   .sale-delete { background: none; border: none; font-size: 18px; color: var(--border);
                  cursor: pointer; padding: 4px; }
 
-  /* ── Summary ── */
   .summary-row { display: flex; justify-content: space-between; padding: 8px 0;
                  border-bottom: 1px solid #eee; font-size: 14px; }
   .summary-row:last-child { border-bottom: none; }
   .summary-row.total { font-weight: 700; font-size: 16px; padding-top: 12px;
-                        margin-top: 4px; border-top: 2px solid var(--green-dark); border-bottom: none; }
+                       margin-top: 4px; border-top: 2px solid var(--green-dark); border-bottom: none; }
   .summary-label { color: var(--muted); }
   .summary-value { font-weight: 600; }
 
-  /* ── Month selector ── */
   .month-nav { display: flex; align-items: center; justify-content: space-between;
                margin-bottom: 16px; }
   .month-nav button { background: none; border: 2px solid var(--green-mid); border-radius: 8px;
                       padding: 6px 14px; font-size: 16px; cursor: pointer; color: var(--green-mid); }
   .month-nav span { font-weight: 700; font-size: 16px; color: var(--green-dark); }
 
-  /* ── Stat grid ── */
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .stat-box { background: var(--green-pale); border-radius: 10px; padding: 12px;
-              text-align: center; }
+  .stat-box { background: var(--green-pale); border-radius: 10px; padding: 12px; text-align: center; }
   .stat-box .val { font-size: 22px; font-weight: 700; color: var(--green-dark); }
   .stat-box .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase;
                    letter-spacing: .04em; margin-top: 2px; }
 
-  /* ── Export ── */
-  .export-section { margin-top: 8px; }
   textarea { width: 100%; font-size: 11px; font-family: monospace; border: 1px solid var(--border);
-             border-radius: 8px; padding: 10px; background: #f9f9f9; resize: none;
-             color: var(--muted); }
+             border-radius: 8px; padding: 10px; background: #f9f9f9; resize: none; color: var(--muted); }
 
   .empty-state { text-align: center; padding: 32px 16px; color: var(--muted); }
   .empty-state .big { font-size: 40px; margin-bottom: 8px; }
 
-  /* ── Customer tag ── */
-  .tag { display: inline-block; background: var(--green-light); color: var(--green-dark);
-         border-radius: 12px; padding: 2px 8px; font-size: 11px; font-weight: 600; margin-top: 2px; }
-  .tag.new { background: #FFF9C4; color: #795900; }
+  /* Veg product rows */
+  .veg-product-row { border: 2px solid var(--border); border-radius: var(--radius);
+                     padding: 12px 14px; margin-bottom: 10px; transition: all .15s; }
+  .veg-product-row.selected { border-color: var(--green-mid); background: var(--green-pale); }
+  .veg-product-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .veg-price-row { display: flex; gap: 8px; }
+  .veg-price-btn { flex: 1; padding: 10px; border: 2px solid var(--border); border-radius: 10px;
+                   background: var(--white); font-size: 14px; font-weight: 700; cursor: pointer;
+                   text-align: center; transition: all .15s; }
+  .veg-price-btn.selected { border-color: var(--green-mid); background: var(--green-dark);
+                             color: var(--white); }
+  .veg-price-btn:active { transform: scale(.96); }
 </style>
 </head>
 <body>
@@ -165,11 +154,11 @@
   <button onclick="showPage('export')">Export</button>
 </nav>
 
-<!-- ════════════════════ LOG SALE PAGE ════════════════════ -->
+<!-- ════════════════════ LOG SALE ════════════════════ -->
 <div class="page active" id="page-log">
-
   <div class="card">
     <h2>What did you sell?</h2>
+
     <div class="product-grid">
       <button class="product-btn" id="btn-eggs" onclick="selectProduct('eggs')">
         <span class="emoji">🥚</span>Eggs
@@ -182,30 +171,30 @@
       </button>
     </div>
 
-    <!-- EGGS fields -->
+    <!-- EGGS -->
     <div id="fields-eggs" style="display:none">
       <div class="field">
         <label>Dozens Sold</label>
         <input type="number" id="eggs-qty" inputmode="numeric" placeholder="e.g. 2" min="1" step="1">
         <div class="qty-row">
-          <button class="qty-chip" onclick="setQty('eggs-qty',1)">1</button>
-          <button class="qty-chip" onclick="setQty('eggs-qty',2)">2</button>
-          <button class="qty-chip" onclick="setQty('eggs-qty',3)">3</button>
-          <button class="qty-chip" onclick="setQty('eggs-qty',6)">6</button>
+          <button class="qty-chip" onclick="setVal('eggs-qty',1)">1</button>
+          <button class="qty-chip" onclick="setVal('eggs-qty',2)">2</button>
+          <button class="qty-chip" onclick="setVal('eggs-qty',3)">3</button>
+          <button class="qty-chip" onclick="setVal('eggs-qty',6)">6</button>
         </div>
       </div>
       <div class="field">
         <label>Price per Dozen ($)</label>
-        <input type="number" id="eggs-price" inputmode="decimal" placeholder="e.g. 7.00" step="0.25">
+        <input type="number" id="eggs-price" inputmode="decimal" placeholder="6.00" step="0.25">
         <div class="qty-row">
-          <button class="qty-chip" onclick="setQty('eggs-price',6)">$6</button>
-          <button class="qty-chip" onclick="setQty('eggs-price',7)">$7</button>
-          <button class="qty-chip" onclick="setQty('eggs-price',8)">$8</button>
+          <button class="qty-chip" onclick="setVal('eggs-price',6)">$6</button>
+          <button class="qty-chip" onclick="setVal('eggs-price',7)">$7</button>
+          <button class="qty-chip" onclick="setVal('eggs-price',8)">$8</button>
         </div>
       </div>
     </div>
 
-    <!-- CHICKEN fields -->
+    <!-- CHICKEN -->
     <div id="fields-chicken" style="display:none">
       <div class="field">
         <label>Weight Sold (lbs)</label>
@@ -213,26 +202,28 @@
       </div>
       <div class="field">
         <label>Price per lb ($)</label>
-        <input type="number" id="chicken-price" inputmode="decimal" placeholder="e.g. 8.00" step="0.25">
+        <input type="number" id="chicken-price" inputmode="decimal" placeholder="7.00" step="0.25">
         <div class="qty-row">
-          <button class="qty-chip" onclick="setQty('chicken-price',7)">$7</button>
-          <button class="qty-chip" onclick="setQty('chicken-price',8)">$8</button>
-          <button class="qty-chip" onclick="setQty('chicken-price',9)">$9</button>
-          <button class="qty-chip" onclick="setQty('chicken-price',10)">$10</button>
+          <button class="qty-chip" onclick="setVal('chicken-price',7)">$7</button>
+          <button class="qty-chip" onclick="setVal('chicken-price',8)">$8</button>
+          <button class="qty-chip" onclick="setVal('chicken-price',9)">$9</button>
+          <button class="qty-chip" onclick="setVal('chicken-price',10)">$10</button>
         </div>
       </div>
     </div>
 
-    <!-- VEG fields -->
+    <!-- VEG -->
     <div id="fields-veg" style="display:none">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Enter up to 5 items. Leave unused rows blank.</p>
-      <div id="veg-rows"></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
+        Tap a price to select. Tap again to deselect. Pick multiple.
+      </p>
+      <div id="veg-products"></div>
     </div>
 
-    <!-- Common fields -->
+    <!-- Shared fields -->
     <div id="common-fields" style="display:none">
       <div class="field">
-        <label>Customer Name <span style="font-weight:400;text-transform:none">(optional — for tracking repeats)</span></label>
+        <label>Customer Name <span style="font-weight:400;text-transform:none">(optional)</span></label>
         <input type="text" id="customer-name" placeholder="First name or nickname" autocomplete="off">
       </div>
       <div class="field">
@@ -240,7 +231,7 @@
         <input type="date" id="sale-date">
       </div>
       <div class="field">
-        <label>Sale Location</label>
+        <label>Location</label>
         <select id="sale-location">
           <option value="f3">F3 Workout</option>
           <option value="farm">On Farm</option>
@@ -250,10 +241,9 @@
       <button class="btn-primary" onclick="logSale()">✓ Log Sale</button>
     </div>
   </div>
-
 </div>
 
-<!-- ════════════════════ TODAY PAGE ════════════════════ -->
+<!-- ════════════════════ TODAY ════════════════════ -->
 <div class="page" id="page-today">
   <div class="card">
     <h2 id="today-heading">Today's Sales</h2>
@@ -262,64 +252,43 @@
   </div>
 </div>
 
-<!-- ════════════════════ MONTHLY PAGE ════════════════════ -->
+<!-- ════════════════════ MONTHLY ════════════════════ -->
 <div class="page" id="page-monthly">
   <div class="month-nav">
     <button onclick="changeMonth(-1)">‹</button>
     <span id="month-label"></span>
     <button onclick="changeMonth(1)">›</button>
   </div>
-
-  <div class="card" id="card-eggs-monthly">
-    <h2>🥚 Eggs</h2>
-    <div id="eggs-monthly-content"></div>
-  </div>
-  <div class="card" id="card-chicken-monthly">
-    <h2>🐓 Chicken</h2>
-    <div id="chicken-monthly-content"></div>
-  </div>
-  <div class="card" id="card-vegsub-monthly">
-    <h2>🥬 Vegetables</h2>
-    <div id="vegsub-monthly-content"></div>
-  </div>
-  <div class="card">
-    <h2>💰 Total Revenue</h2>
-    <div id="total-monthly-content"></div>
-  </div>
+  <div class="card"><h2>🥚 Eggs</h2><div id="eggs-monthly"></div></div>
+  <div class="card"><h2>🐓 Chicken</h2><div id="chicken-monthly"></div></div>
+  <div class="card"><h2>🥬 Vegetables</h2><div id="veg-monthly"></div></div>
+  <div class="card"><h2>💰 Total Revenue</h2><div id="total-monthly"></div></div>
 </div>
 
-<!-- ════════════════════ EXPORT PAGE ════════════════════ -->
+<!-- ════════════════════ EXPORT ════════════════════ -->
 <div class="page" id="page-export">
   <div class="card">
     <h2>Export to Tracker</h2>
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
-      Copy the CSV below and paste into the matching tab in your Excel tracker.
-      Each section maps directly to the blue input cells.
+      Copy the values below into the matching month column in your Excel tracker.
     </p>
     <div class="month-nav" style="margin-bottom:8px">
       <button onclick="changeExportMonth(-1)">‹</button>
       <span id="export-month-label"></span>
       <button onclick="changeExportMonth(1)">›</button>
     </div>
-    <div class="export-section">
-      <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin-bottom:6px">
-        Eggs Tab — paste into row for this month
-      </label>
-      <textarea id="csv-eggs" rows="4" readonly onclick="this.select()"></textarea>
 
-      <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin:12px 0 6px">
-        Chicken — new batch row (from this month's sales)
-      </label>
-      <textarea id="csv-chicken" rows="3" readonly onclick="this.select()"></textarea>
+    <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin-bottom:6px">Eggs Tab</label>
+    <textarea id="csv-eggs" rows="5" readonly onclick="this.select()"></textarea>
 
-      <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin:12px 0 6px">
-        Veg Tab — paste into row for this month
-      </label>
-      <textarea id="csv-vegsub" rows="3" readonly onclick="this.select()"></textarea>
-    </div>
+    <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin:12px 0 6px">Chicken Tab</label>
+    <textarea id="csv-chicken" rows="4" readonly onclick="this.select()"></textarea>
+
+    <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin:12px 0 6px">Veg Tab</label>
+    <textarea id="csv-veg" rows="5" readonly onclick="this.select()"></textarea>
+
     <button class="btn-secondary" onclick="copyAll()">📋 Copy All to Clipboard</button>
   </div>
-
   <div class="card">
     <h2>Data Management</h2>
     <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
@@ -329,51 +298,48 @@
   </div>
 </div>
 
-<div id="toast">✓ Sale logged!</div>
+<div id="toast"></div>
 
 <script>
+// ── Veg product config ─────────────────────────────────────────────────────
+const VEG_PRODUCTS = [
+  { id: 'lettuce',    name: 'Lettuce Mix',  prices: [{qty:1,price:3},{qty:2,price:5}] },
+  { id: 'microgreens',name: 'Microgreens',  prices: [{qty:1,price:6},{qty:2,price:10}] },
+  { id: 'sungolds',   name: 'Sungolds',     prices: [{qty:1,price:3},{qty:2,price:5}] },
+  { id: 'slicers',    name: 'Slicers',      prices: [{qty:1,price:3},{qty:2,price:5}] },
+];
+
+// vegSelections[productId] = {qty, price} or null
+const vegSelections = {};
+
 // ── Storage ────────────────────────────────────────────────────────────────
 const STORE_KEY = 'anomaly_farm_sales_v1';
-
 function loadSales() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
-  catch(e) { return []; }
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch(e) { return []; }
 }
-
-function saveSales(sales) {
-  localStorage.setItem(STORE_KEY, JSON.stringify(sales));
-}
-
+function saveSales(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 function addSale(sale) {
   const sales = loadSales();
   sale.id = Date.now() + Math.random();
   sales.push(sale);
   saveSales(sales);
 }
-
-function deleteSale(id) {
-  const sales = loadSales().filter(s => s.id !== id);
-  saveSales(sales);
-}
+function deleteSale(id) { saveSales(loadSales().filter(s => s.id !== id)); }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 function fmt$(n) { return '$' + (+n).toFixed(2); }
 function fmtDate(d) {
-  return new Date(d + 'T12:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 }
-function monthKey(dateStr) { return dateStr.slice(0, 7); } // "2026-06"
-function monthLabel(key) {
-  const [y, m] = key.split('-');
-  return new Date(y, m - 1, 1).toLocaleDateString('en-US', {month:'long', year:'numeric'});
+function monthKey(d) { return d.slice(0,7); }
+function monthLabel(k) {
+  const [y,m] = k.split('-');
+  return new Date(y, m-1, 1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
 }
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
-
+function todayStr() { return new Date().toISOString().slice(0,10); }
 function toast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
@@ -381,13 +347,12 @@ function toast(msg) {
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav button').forEach((b,i) => {
-    const names = ['log','today','monthly','export'];
-    b.classList.toggle('active', names[i] === name);
+    b.classList.toggle('active', ['log','today','monthly','export'][i] === name);
   });
   document.getElementById('page-' + name).classList.add('active');
-  if (name === 'today') renderToday();
+  if (name === 'today')   renderToday();
   if (name === 'monthly') renderMonthly();
-  if (name === 'export') renderExport();
+  if (name === 'export')  renderExport();
 }
 
 // ── Product selection ──────────────────────────────────────────────────────
@@ -397,79 +362,68 @@ function selectProduct(p) {
   selectedProduct = p;
   document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('btn-' + p).classList.add('selected');
-  ['eggs','chicken','veg'].forEach(x => {
-    document.getElementById('fields-' + x).style.display = (x === p) ? 'block' : 'none';
-  });
+  ['eggs','chicken','veg'].forEach(x =>
+    document.getElementById('fields-' + x).style.display = x === p ? 'block' : 'none');
   document.getElementById('common-fields').style.display = 'block';
   document.getElementById('sale-date').value = todayStr();
-  // Apply default prices
   if (p === 'eggs')    document.getElementById('eggs-price').value = 6;
   if (p === 'chicken') document.getElementById('chicken-price').value = 7;
-  if (p === 'veg')     buildVegRows();
+  if (p === 'veg')     buildVegProducts();
 }
 
-function buildVegRows() {
-  const container = document.getElementById('veg-rows');
-  container.innerHTML = '';
-  for (let i = 0; i < 5; i++) {
-    container.innerHTML += `
-      <div class="veg-row" style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <input type="text" id="veg-name-${i}" placeholder="Product name"
-          style="flex:1;padding:10px 12px;border:2px solid var(--border);border-radius:10px;
-                 font-size:15px;min-width:0" autocomplete="off">
-        <div style="display:flex;gap:6px;flex-shrink:0">
-          <button type="button" class="price-toggle" id="veg-price-${i}-1"
-            onclick="setVegPrice(${i},1,3)"
-            style="padding:10px 12px;border:2px solid var(--border);border-radius:10px;
-                   background:var(--white);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
-            1 / $3
-          </button>
-          <button type="button" class="price-toggle" id="veg-price-${i}-2"
-            onclick="setVegPrice(${i},2,5)"
-            style="padding:10px 12px;border:2px solid var(--border);border-radius:10px;
-                   background:var(--white);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
-            2 / $5
-          </button>
-        </div>
-      </div>`;
+function setVal(id, v) { document.getElementById(id).value = v; }
+
+// ── Veg product builder ────────────────────────────────────────────────────
+function buildVegProducts() {
+  Object.keys(vegSelections).forEach(k => delete vegSelections[k]);
+  const container = document.getElementById('veg-products');
+  container.innerHTML = VEG_PRODUCTS.map(prod => `
+    <div class="veg-product-row" id="veg-row-${prod.id}">
+      <div class="veg-product-name">${prod.name}</div>
+      <div class="veg-price-row">
+        ${prod.prices.map((p,i) => `
+          <button type="button" class="veg-price-btn" id="veg-btn-${prod.id}-${i}"
+            onclick="selectVegPrice('${prod.id}', ${p.qty}, ${p.price}, ${i})">
+            ${p.qty} / $${p.price}
+          </button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function selectVegPrice(productId, qty, price, btnIndex) {
+  const prod = VEG_PRODUCTS.find(p => p.id === productId);
+  // Toggle: if same selection, deselect
+  if (vegSelections[productId] && vegSelections[productId].qty === qty) {
+    delete vegSelections[productId];
+    prod.prices.forEach((_,i) => {
+      const btn = document.getElementById(`veg-btn-${productId}-${i}`);
+      if (btn) { btn.classList.remove('selected'); }
+    });
+    document.getElementById(`veg-row-${productId}`).classList.remove('selected');
+    return;
   }
-}
-
-// Track selected veg pricing per row
-const vegSelections = {};
-function setVegPrice(row, qty, price) {
-  vegSelections[row] = { qty, price };
-  // Highlight selected button
-  [1,2].forEach(b => {
-    const el = document.getElementById(`veg-price-${row}-${b}`);
-    if (el) {
-      el.style.background = (b === (qty === 1 ? 1 : 2)) ? 'var(--green-pale)' : 'var(--white)';
-      el.style.borderColor = (b === (qty === 1 ? 1 : 2)) ? 'var(--green-mid)' : 'var(--border)';
-      el.style.color = (b === (qty === 1 ? 1 : 2)) ? 'var(--green-dark)' : 'var(--text)';
-    }
+  // Select this price option
+  vegSelections[productId] = { name: prod.name, qty, price };
+  prod.prices.forEach((_,i) => {
+    const btn = document.getElementById(`veg-btn-${productId}-${i}`);
+    if (btn) btn.classList.toggle('selected', i === btnIndex);
   });
+  document.getElementById(`veg-row-${productId}`).classList.add('selected');
 }
 
-function setQty(id, val) {
-  document.getElementById(id).value = val;
-}
-
-// ── Log a sale ─────────────────────────────────────────────────────────────
+// ── Log sale ───────────────────────────────────────────────────────────────
 function logSale() {
   if (!selectedProduct) { toast('⚠ Pick a product first'); return; }
-
   const date     = document.getElementById('sale-date').value || todayStr();
   const customer = document.getElementById('customer-name').value.trim();
   const location = document.getElementById('sale-location').value;
-
   let sale = { product: selectedProduct, date, customer, location };
 
   if (selectedProduct === 'eggs') {
     const qty   = parseFloat(document.getElementById('eggs-qty').value);
     const price = parseFloat(document.getElementById('eggs-price').value);
     if (!qty || !price) { toast('⚠ Enter qty and price'); return; }
-    sale.qty   = qty;
-    sale.price = price;
+    sale.qty = qty; sale.price = price;
     sale.revenue = qty * price;
     sale.label = `${qty} doz × ${fmt$(price)}`;
   }
@@ -477,34 +431,29 @@ function logSale() {
     const lbs   = parseFloat(document.getElementById('chicken-lbs').value);
     const price = parseFloat(document.getElementById('chicken-price').value);
     if (!lbs || !price) { toast('⚠ Enter weight and price'); return; }
-    sale.lbs     = lbs;
-    sale.price   = price;
+    sale.lbs = lbs; sale.price = price;
     sale.revenue = lbs * price;
-    sale.label   = `${lbs} lbs × ${fmt$(price)}/lb`;
+    sale.label = `${lbs} lbs × ${fmt$(price)}/lb`;
   }
   else if (selectedProduct === 'veg') {
-    const items = [];
-    for (let i = 0; i < 5; i++) {
-      const name = (document.getElementById(`veg-name-${i}`)?.value || '').trim();
-      const sel  = vegSelections[i];
-      if (name && sel) items.push({ name, qty: sel.qty, price: sel.price, revenue: sel.price });
-    }
-    if (!items.length) { toast('⚠ Enter at least one item with a price'); return; }
+    const items = Object.values(vegSelections).map(s => ({
+      name: s.name, qty: s.qty, price: s.price, revenue: s.price
+    }));
+    if (!items.length) { toast('⚠ Select at least one item'); return; }
     sale.items   = items;
-    sale.revenue = items.reduce((a, it) => a + it.revenue, 0);
+    sale.revenue = items.reduce((a,it) => a + it.revenue, 0);
     sale.label   = items.map(it => `${it.name} (${it.qty}/$${it.price})`).join(', ');
   }
 
   addSale(sale);
   toast(`✓ Logged — ${fmt$(sale.revenue || 0)}`);
 
-  // Reset form
+  // Reset
   document.getElementById('eggs-qty').value = '';
   document.getElementById('eggs-price').value = '';
   document.getElementById('chicken-lbs').value = '';
   document.getElementById('chicken-price').value = '';
   document.getElementById('customer-name').value = '';
-  Object.keys(vegSelections).forEach(k => delete vegSelections[k]);
   selectedProduct = null;
   document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('selected'));
   ['eggs','chicken','veg'].forEach(x =>
@@ -516,54 +465,40 @@ function logSale() {
 function renderToday() {
   const today = todayStr();
   const sales = loadSales().filter(s => s.date === today);
-
-  const heading = document.getElementById('today-heading');
-  heading.textContent = 'Today — ' + fmtDate(today);
-
-  // Stats
-  const eggRev  = sales.filter(s=>s.product==='eggs').reduce((a,s)=>a+s.revenue,0);
-  const chickRev = sales.filter(s=>s.product==='chicken').reduce((a,s)=>a+s.revenue,0);
-  const vegRev  = sales.filter(s=>s.product==='vegsub').reduce((a,s)=>a+s.revenue,0);
-  const total   = eggRev + chickRev + vegRev;
-
+  document.getElementById('today-heading').textContent = 'Today — ' + fmtDate(today);
+  const total = sales.reduce((a,s) => a + (s.revenue||0), 0);
   document.getElementById('today-stats').innerHTML = `
     <div class="stat-box"><div class="val">${fmt$(total)}</div><div class="lbl">Total</div></div>
-    <div class="stat-box"><div class="val">${sales.length}</div><div class="lbl">Transactions</div></div>
-  `;
-
+    <div class="stat-box"><div class="val">${sales.length}</div><div class="lbl">Transactions</div></div>`;
   const list = document.getElementById('today-list');
   if (!sales.length) {
     list.innerHTML = '<div class="empty-state"><div class="big">🛒</div>No sales yet today.</div>';
     return;
   }
-
   list.innerHTML = [...sales].reverse().map(s => `
     <div class="sale-item">
       <span class="sale-emoji">${s.product==='eggs'?'🥚':s.product==='chicken'?'🐓':'🥬'}</span>
       <div class="sale-detail">
         <strong>${s.label}</strong>
-        <span>${s.location === 'f3' ? 'F3 Workout' : s.location === 'farm' ? 'On Farm' : 'Other'}</span>
-        ${s.customer ? `<span class="tag">${s.customer}</span>` : ''}
+        <span>${s.location==='f3'?'F3 Workout':s.location==='farm'?'On Farm':'Other'}</span>
+        ${s.customer?`<span style="display:inline-block;background:var(--green-light);color:var(--green-dark);border-radius:12px;padding:2px 8px;font-size:11px;font-weight:600;margin-top:2px">${s.customer}</span>`:''}
       </div>
       <span class="sale-amount">${fmt$(s.revenue||0)}</span>
       <button class="sale-delete" onclick="deleteSaleAndRefresh(${s.id})">×</button>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function deleteSaleAndRefresh(id) {
   if (!confirm('Delete this entry?')) return;
-  deleteSale(id);
-  renderToday();
+  deleteSale(id); renderToday();
 }
 
 // ── Monthly ────────────────────────────────────────────────────────────────
 let viewMonth = monthKey(todayStr());
 
 function changeMonth(dir) {
-  const [y, m] = viewMonth.split('-').map(Number);
-  const d = new Date(y, m - 1 + dir, 1);
-  viewMonth = d.toISOString().slice(0, 7);
+  const [y,m] = viewMonth.split('-').map(Number);
+  viewMonth = new Date(y, m-1+dir, 1).toISOString().slice(0,7);
   renderMonthly();
 }
 
@@ -571,74 +506,59 @@ function renderMonthly() {
   document.getElementById('month-label').textContent = monthLabel(viewMonth);
   const sales = loadSales().filter(s => monthKey(s.date) === viewMonth);
 
-  // ── EGGS ──
-  const eggSales = sales.filter(s => s.product === 'eggs');
-  const eggDoz   = eggSales.reduce((a,s) => a + (s.qty||0), 0);
-  const eggRev   = eggSales.reduce((a,s) => a + s.revenue, 0);
-  const eggCusts = [...new Set(eggSales.map(s=>s.customer).filter(Boolean))];
-  const eggDozAvg = eggDoz > 0 ? (eggRev / eggDoz) : 0;
-
-  document.getElementById('eggs-monthly-content').innerHTML = eggSales.length ? `
+  // Eggs
+  const eggS = sales.filter(s => s.product==='eggs');
+  const eggDoz = eggS.reduce((a,s)=>a+(s.qty||0),0);
+  const eggRev = eggS.reduce((a,s)=>a+s.revenue,0);
+  const eggCusts = new Set(eggS.map(s=>s.customer).filter(Boolean)).size;
+  document.getElementById('eggs-monthly').innerHTML = eggS.length ? `
     <div class="summary-row"><span class="summary-label">Dozens Sold</span><span class="summary-value">${eggDoz}</span></div>
-    <div class="summary-row"><span class="summary-label">Avg Price / Dozen</span><span class="summary-value">${fmt$(eggDozAvg)}</span></div>
-    <div class="summary-row"><span class="summary-label">Named Customers</span><span class="summary-value">${eggCusts.length}</span></div>
-    <div class="summary-row"><span class="summary-label">Transactions</span><span class="summary-value">${eggSales.length}</span></div>
-    <div class="summary-row total"><span>Egg Revenue</span><span>${fmt$(eggRev)}</span></div>
-  ` : '<div class="empty-state" style="padding:16px 0">No egg sales this month.</div>';
+    <div class="summary-row"><span class="summary-label">Avg Price/Doz</span><span class="summary-value">${eggDoz?fmt$(eggRev/eggDoz):'—'}</span></div>
+    <div class="summary-row"><span class="summary-label">Named Customers</span><span class="summary-value">${eggCusts}</span></div>
+    <div class="summary-row total"><span>Egg Revenue</span><span>${fmt$(eggRev)}</span></div>`
+    : '<div class="empty-state" style="padding:16px 0">No egg sales this month.</div>';
 
-  // ── CHICKEN ──
-  const chickSales = sales.filter(s => s.product === 'chicken');
-  const chickLbs   = chickSales.reduce((a,s) => a + (s.lbs||0), 0);
-  const chickBirds = chickSales.reduce((a,s) => a + (s.birds||0), 0);
-  const chickRev   = chickSales.reduce((a,s) => a + s.revenue, 0);
+  // Chicken
+  const chkS = sales.filter(s => s.product==='chicken');
+  const chkLbs = chkS.reduce((a,s)=>a+(s.lbs||0),0);
+  const chkRev = chkS.reduce((a,s)=>a+s.revenue,0);
+  document.getElementById('chicken-monthly').innerHTML = chkS.length ? `
+    <div class="summary-row"><span class="summary-label">Total lbs Sold</span><span class="summary-value">${chkLbs.toFixed(1)}</span></div>
+    <div class="summary-row"><span class="summary-label">Transactions</span><span class="summary-value">${chkS.length}</span></div>
+    <div class="summary-row total"><span>Chicken Revenue</span><span>${fmt$(chkRev)}</span></div>`
+    : '<div class="empty-state" style="padding:16px 0">No chicken sales this month.</div>';
 
-  document.getElementById('chicken-monthly-content').innerHTML = chickSales.length ? `
-    <div class="summary-row"><span class="summary-label">Total lbs Sold</span><span class="summary-value">${chickLbs.toFixed(1)}</span></div>
-    <div class="summary-row"><span class="summary-label">Whole Birds Sold</span><span class="summary-value">${chickBirds}</span></div>
-    <div class="summary-row"><span class="summary-label">Transactions</span><span class="summary-value">${chickSales.length}</span></div>
-    <div class="summary-row total"><span>Chicken Revenue</span><span>${fmt$(chickRev)}</span></div>
-  ` : '<div class="empty-state" style="padding:16px 0">No chicken sales this month.</div>';
-
-  // ── VEG ──
-  const vegSales = sales.filter(s => s.product === 'veg');
-  const vegRev   = vegSales.reduce((a,s) => a + (s.revenue||0), 0);
-  // Tally individual items across all veg transactions
-  const vegItemMap = {};
-  vegSales.forEach(s => (s.items||[]).forEach(it => {
-    const k = it.name;
-    if (!vegItemMap[k]) vegItemMap[k] = {qty:0, rev:0};
-    vegItemMap[k].qty += it.qty;
-    vegItemMap[k].rev += it.revenue;
+  // Veg
+  const vegS = sales.filter(s => s.product==='veg');
+  const vegRev = vegS.reduce((a,s)=>a+(s.revenue||0),0);
+  const vegMap = {};
+  vegS.forEach(s => (s.items||[]).forEach(it => {
+    if (!vegMap[it.name]) vegMap[it.name] = {qty:0,rev:0};
+    vegMap[it.name].qty += it.qty; vegMap[it.name].rev += it.revenue;
   }));
-  const vegRows = Object.entries(vegItemMap)
-    .sort((a,b) => b[1].rev - a[1].rev)
-    .map(([name,{qty,rev}]) =>
-      `<div class="summary-row"><span class="summary-label">${name}</span><span class="summary-value">${qty} sold — ${fmt$(rev)}</span></div>`)
+  const vegRows = Object.entries(vegMap).sort((a,b)=>b[1].rev-a[1].rev)
+    .map(([n,{qty,rev}])=>`<div class="summary-row"><span class="summary-label">${n}</span><span class="summary-value">${qty} sold — ${fmt$(rev)}</span></div>`)
     .join('');
-
-  document.getElementById('vegsub-monthly-content').innerHTML = vegSales.length ? `
+  document.getElementById('veg-monthly').innerHTML = vegS.length ? `
     ${vegRows}
-    <div class="summary-row"><span class="summary-label">Transactions</span><span class="summary-value">${vegSales.length}</span></div>
-    <div class="summary-row total"><span>Veg Revenue</span><span>${fmt$(vegRev)}</span></div>
-  ` : '<div class="empty-state" style="padding:16px 0">No veg sales this month.</div>';
+    <div class="summary-row total"><span>Veg Revenue</span><span>${fmt$(vegRev)}</span></div>`
+    : '<div class="empty-state" style="padding:16px 0">No veg sales this month.</div>';
 
-  // ── TOTAL ──
-  const total = (eggRev + chickSales.reduce((a,s)=>a+s.revenue,0) + vegRev);
-  document.getElementById('total-monthly-content').innerHTML = `
+  // Total
+  const totalRev = eggRev + chkRev + vegRev;
+  document.getElementById('total-monthly').innerHTML = `
     <div class="summary-row"><span class="summary-label">🥚 Eggs</span><span class="summary-value">${fmt$(eggRev)}</span></div>
-    <div class="summary-row"><span class="summary-label">🐓 Chicken</span><span class="summary-value">${fmt$(chickSales.reduce((a,s)=>a+s.revenue,0))}</span></div>
+    <div class="summary-row"><span class="summary-label">🐓 Chicken</span><span class="summary-value">${fmt$(chkRev)}</span></div>
     <div class="summary-row"><span class="summary-label">🥬 Veg</span><span class="summary-value">${fmt$(vegRev)}</span></div>
-    <div class="summary-row total"><span>Total</span><span>${fmt$(total)}</span></div>
-  `;
+    <div class="summary-row total"><span>Total</span><span>${fmt$(totalRev)}</span></div>`;
 }
 
 // ── Export ─────────────────────────────────────────────────────────────────
 let exportMonth = monthKey(todayStr());
 
 function changeExportMonth(dir) {
-  const [y, m] = exportMonth.split('-').map(Number);
-  const d = new Date(y, m - 1 + dir, 1);
-  exportMonth = d.toISOString().slice(0, 7);
+  const [y,m] = exportMonth.split('-').map(Number);
+  exportMonth = new Date(y, m-1+dir, 1).toISOString().slice(0,7);
   renderExport();
 }
 
@@ -646,107 +566,91 @@ function renderExport() {
   document.getElementById('export-month-label').textContent = monthLabel(exportMonth);
   const sales = loadSales().filter(s => monthKey(s.date) === exportMonth);
 
-  // EGGS
-  const eggSales   = sales.filter(s => s.product === 'eggs');
-  const eggDoz     = eggSales.reduce((a,s) => a + (s.qty||0), 0);
-  const eggRev     = eggSales.reduce((a,s) => a + s.revenue, 0).toFixed(2);
-  const eggCusts   = new Set(eggSales.map(s=>s.customer).filter(Boolean)).size;
-  // Repeat = customers who appear more than once across all months (not just this month)
-  const allSales   = loadSales();
+  // Eggs
+  const eggS   = sales.filter(s=>s.product==='eggs');
+  const eggDoz = eggS.reduce((a,s)=>a+(s.qty||0),0);
+  const eggRev = eggS.reduce((a,s)=>a+s.revenue,0).toFixed(2);
+  const eggCusts = new Set(eggS.map(s=>s.customer).filter(Boolean)).size;
+  const allSales = loadSales();
   const custMonths = {};
   allSales.filter(s=>s.product==='eggs'&&s.customer).forEach(s=>{
     const k = s.customer.toLowerCase().trim();
     if (!custMonths[k]) custMonths[k] = new Set();
     custMonths[k].add(monthKey(s.date));
   });
-  const eggRepeat  = eggSales.filter(s=>s.customer &&
-    custMonths[s.customer.toLowerCase().trim()] &&
-    custMonths[s.customer.toLowerCase().trim()].size > 1).length;
+  const eggRepeat = eggS.filter(s=>s.customer&&custMonths[s.customer.toLowerCase().trim()]?.size>1).length;
 
-  const eggCsv = [
-    'Field,Value',
-    `Dozen Eggs Sold,${eggDoz}`,
-    `Unique Egg Customers,${eggCusts}`,
-    `Repeat Customers (named),${eggRepeat}`,
-    `Gross Revenue ($),${eggRev}`,
-    '--- Fill manually in tracker ---',
-    'Avg Hens in Flock,[enter]',
-    'Dozen Eggs Collected,[enter]',
-    'Dozen Eggs Waste/Loss,[enter]',
-    'Feed Cost ($),[enter]',
-    'Egg Labor Hours,[enter]',
+  document.getElementById('csv-eggs').value = [
+    `Dozen Eggs Sold: ${eggDoz}`,
+    `Gross Revenue ($): ${eggRev}`,
+    `Unique Customers (named): ${eggCusts}`,
+    `Repeat Customers (named): ${eggRepeat}`,
+    `--- Enter manually ---`,
+    `Avg Hens in Flock: [enter]`,
+    `Dozen Eggs Collected: [enter]`,
+    `Dozen Eggs Waste: [enter]`,
+    `Feed Cost ($): [enter]`,
+    `Labor Hours: [enter]`,
   ].join('\n');
-  document.getElementById('csv-eggs').value = eggCsv;
 
-  // CHICKEN
-  const chickSales = sales.filter(s => s.product === 'chicken');
-  const chickLbs   = chickSales.reduce((a,s) => a + (s.lbs||0), 0).toFixed(1);
-  const chickBirds = chickSales.reduce((a,s) => a + (s.birds||0), 0);
-  const chickRev   = chickSales.reduce((a,s) => a + s.revenue, 0).toFixed(2);
+  // Chicken
+  const chkS   = sales.filter(s=>s.product==='chicken');
+  const chkLbs = chkS.reduce((a,s)=>a+(s.lbs||0),0).toFixed(1);
+  const chkRev = chkS.reduce((a,s)=>a+s.revenue,0).toFixed(2);
 
-  const chickCsv = [
-    'Field,Value',
-    `Revenue ($),${chickRev}`,
-    `Total Live Weight Sold (lbs),${chickLbs}`,
-    `Birds Sold,${chickBirds}`,
-    '--- Fill manually in tracker ---',
-    'Birds Started,[enter]',
-    'Birds Processed,[enter]',
-    'Total Feed Used (lbs),[enter]',
-    'Feed Cost ($),[enter]',
-    'Processing Cost ($),[enter]',
-    'Labor Hours,[enter]',
+  document.getElementById('csv-chicken').value = [
+    `Revenue ($): ${chkRev}`,
+    `Total Live Weight Sold (lbs): ${chkLbs}`,
+    `--- Enter manually ---`,
+    `Birds Started: [enter]`,
+    `Birds Processed: [enter]`,
+    `Total Feed Used (lbs): [enter]`,
+    `Feed Cost ($): [enter]`,
+    `Processing Cost ($): [enter]`,
+    `Labor Hours: [enter]`,
   ].join('\n');
-  document.getElementById('csv-chicken').value = chickCsv;
 
-  // VEG
-  const vegSales = sales.filter(s => s.product === 'veg');
-  const vegRev   = vegSales.reduce((a,s) => a + (s.revenue||0), 0).toFixed(2);
-  const vegItemMap2 = {};
-  vegSales.forEach(s => (s.items||[]).forEach(it => {
-    const k = it.name;
-    if (!vegItemMap2[k]) vegItemMap2[k] = {qty:0, rev:0};
-    vegItemMap2[k].qty += it.qty;
-    vegItemMap2[k].rev += it.revenue;
+  // Veg
+  const vegS  = sales.filter(s=>s.product==='veg');
+  const vegRev = vegS.reduce((a,s)=>a+(s.revenue||0),0).toFixed(2);
+  const vegMap = {};
+  vegS.forEach(s=>(s.items||[]).forEach(it=>{
+    if (!vegMap[it.name]) vegMap[it.name]={qty:0,rev:0};
+    vegMap[it.name].qty+=it.qty; vegMap[it.name].rev+=it.revenue;
   }));
-  const vegItemLines = Object.entries(vegItemMap2)
-    .map(([n,{qty,rev}]) => `  ${n}: ${qty} units — $${rev.toFixed(2)}`).join('\n') || '  (none)';
+  const itemLines = Object.entries(vegMap).map(([n,{qty,rev}])=>`  ${n}: ${qty} units — $${rev.toFixed(2)}`).join('\n') || '  (none)';
 
-  const vegCsv = [
-    'Field,Value',
-    `Gross Revenue ($),${vegRev}`,
-    `Items sold this month:`,
-    vegItemLines,
-    '--- Fill manually in tracker ---',
-    'Seeds & Inputs Cost ($),[enter]',
-    'Veg Labor Hours,[enter]',
-    'Harvest Waste (lbs),[enter]',
-    'Total Harvest (lbs),[enter]',
+  document.getElementById('csv-veg').value = [
+    `Gross Revenue ($): ${vegRev}`,
+    `Items sold:`,
+    itemLines,
+    `--- Enter manually ---`,
+    `Seeds & Inputs Cost ($): [enter]`,
+    `Labor Hours: [enter]`,
+    `Harvest Waste (lbs): [enter]`,
+    `Total Harvest (lbs): [enter]`,
   ].join('\n');
-  document.getElementById('csv-vegsub').value = vegCsv;
 
   document.getElementById('entry-count').textContent = loadSales().length;
 }
 
 function copyAll() {
-  const all = [
-    '=== EGGS ===\n' + document.getElementById('csv-eggs').value,
-    '\n=== CHICKEN ===\n' + document.getElementById('csv-chicken').value,
-    '\n=== VEG SUBSCRIPTIONS ===\n' + document.getElementById('csv-vegsub').value,
-  ].join('\n');
-  navigator.clipboard.writeText(all).then(() => toast('📋 Copied to clipboard!'));
+  const all = ['=== EGGS ===\n'+document.getElementById('csv-eggs').value,
+               '\n=== CHICKEN ===\n'+document.getElementById('csv-chicken').value,
+               '\n=== VEG ===\n'+document.getElementById('csv-veg').value].join('\n');
+  navigator.clipboard.writeText(all).then(()=>toast('📋 Copied!'));
 }
 
 function clearAllData() {
-  if (!confirm('Delete ALL sales data? This cannot be undone.')) return;
+  if (!confirm('Delete ALL sales data? Cannot be undone.')) return;
   localStorage.removeItem(STORE_KEY);
   toast('🗑 All data cleared');
   renderExport();
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────
-document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-US',
-  {weekday:'short', month:'short', day:'numeric'});
+document.getElementById('headerDate').textContent =
+  new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
 document.getElementById('sale-date').value = todayStr();
 </script>
 </body>
