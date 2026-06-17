@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Anomaly Farm — Egg Log</title>
+<style>
+  :root {
+    --green-dark: #2D5016;
+    --green-mid: #4F7A28;
+    --green-light: #C6EFCE;
+    --green-pale: #EBF1DE;
+    --amber: #F9A825;
+    --amber-pale: #FFF8E1;
+    --red: #C62828;
+    --red-pale: #FFEBEE;
+    --text: #1a1a1a;
+    --muted: #666;
+    --border: #ccc;
+    --bg: #f5f5f0;
+    --white: #fff;
+    --radius: 12px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header { background: var(--green-dark); color: #fff; padding: 16px 20px 12px;
+           position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+  header h1 { font-size: 18px; font-weight: 700; }
+  header p  { font-size: 12px; opacity: .75; margin-top: 2px; }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-end; }
+  .date-badge { background: rgba(255,255,255,.15); border-radius: 8px; padding: 4px 10px; font-size: 13px; }
+
+  nav { display: flex; background: var(--green-dark); border-top: 1px solid rgba(255,255,255,.1); }
+  nav button { flex: 1; padding: 10px 4px; background: none; border: none;
+               color: rgba(255,255,255,.6); font-size: 13px; font-weight: 600; cursor: pointer; }
+  nav button.active { color: #fff; border-bottom: 3px solid var(--amber); }
+
+  .page { display: none; padding: 16px; max-width: 500px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  .card { background: var(--white); border-radius: var(--radius); padding: 16px;
+          box-shadow: var(--shadow); margin-bottom: 16px; }
+  .card h2 { font-size: 15px; color: var(--green-dark); font-weight: 700;
+             margin-bottom: 12px; border-bottom: 2px solid var(--green-light); padding-bottom: 8px; }
+
+  /* Timer */
+  .timer-block { text-align: center; padding: 16px 0 8px; }
+  .timer-display { font-size: 48px; font-weight: 700; color: var(--green-dark);
+                   letter-spacing: 2px; font-variant-numeric: tabular-nums; }
+  .timer-display.running { color: var(--green-mid); }
+  .timer-btn { margin-top: 12px; padding: 14px 40px; border: none; border-radius: 30px;
+               font-size: 17px; font-weight: 700; cursor: pointer; transition: all .15s; }
+  .timer-btn.start { background: var(--green-mid); color: #fff; }
+  .timer-btn.stop  { background: var(--red); color: #fff; }
+  .timer-btn:active { transform: scale(.96); }
+  .timer-manual { display: flex; align-items: center; gap: 8px; margin-top: 10px;
+                  justify-content: center; }
+  .timer-manual span { font-size: 13px; color: var(--muted); }
+  .timer-manual input { width: 70px; padding: 6px 10px; border: 2px solid var(--border);
+                        border-radius: 8px; font-size: 15px; text-align: center; }
+
+  /* Flock rows */
+  .flock-row { background: var(--green-pale); border-radius: 10px; padding: 12px 14px;
+               margin-bottom: 10px; }
+  .flock-name { font-size: 15px; font-weight: 700; color: var(--green-dark); margin-bottom: 10px; }
+  .flock-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .flock-field label { display: block; font-size: 11px; font-weight: 700; color: var(--muted);
+                       text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .flock-field input { width: 100%; padding: 10px 12px; border: 2px solid var(--border);
+                       border-radius: 8px; font-size: 20px; font-weight: 700; text-align: center;
+                       background: var(--white); -webkit-appearance: none; }
+  .flock-field input:focus { outline: none; border-color: var(--green-mid); }
+  .flock-field.waste input { border-color: #FFCDD2; background: var(--red-pale); }
+  .flock-field.waste input:focus { border-color: var(--red); }
+
+  /* Quick-tap number buttons */
+  .num-row { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .num-chip { padding: 5px 12px; border: 2px solid var(--border); border-radius: 16px;
+              background: var(--white); font-size: 14px; font-weight: 700; cursor: pointer; }
+  .num-chip:active { background: var(--green-pale); border-color: var(--green-mid); }
+
+  /* Field */
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--muted);
+                 margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+  .field input, .field select {
+    width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px;
+    font-size: 16px; background: var(--white); -webkit-appearance: none; }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--green-mid); }
+
+  .btn-primary { width: 100%; padding: 16px; background: var(--green-mid); color: #fff;
+                 border: none; border-radius: var(--radius); font-size: 17px; font-weight: 700;
+                 cursor: pointer; transition: background .15s; }
+  .btn-primary:active { background: var(--green-dark); }
+  .btn-sm { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+            cursor: pointer; border: 2px solid var(--border); background: var(--white); }
+  .btn-danger { background: #fff; color: var(--red); border: 2px solid var(--red);
+                border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+
+  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+           background: var(--green-dark); color: #fff; padding: 12px 24px; border-radius: 24px;
+           font-weight: 600; font-size: 15px; transition: transform .3s; z-index: 999;
+           pointer-events: none; box-shadow: var(--shadow); }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* History list */
+  .history-item { padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer; }
+  .history-item:last-child { border-bottom: none; }
+  .history-date { font-weight: 700; font-size: 14px; }
+  .history-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .history-stats { display: flex; gap: 12px; margin-top: 6px; }
+  .h-stat { text-align: center; background: var(--green-pale); border-radius: 8px;
+            padding: 6px 10px; min-width: 60px; }
+  .h-stat .val { font-size: 18px; font-weight: 700; color: var(--green-dark); }
+  .h-stat .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .h-stat.waste { background: var(--red-pale); }
+  .h-stat.waste .val { color: var(--red); }
+  .h-stat.time { background: var(--amber-pale); }
+  .h-stat.time .val { color: #795900; font-size: 14px; }
+
+  .flock-detail { font-size: 12px; color: var(--muted); margin-top: 4px; padding-left: 4px; }
+
+  /* Month nav */
+  .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .month-nav button { background: none; border: 2px solid var(--green-mid); border-radius: 8px;
+                      padding: 6px 14px; font-size: 16px; cursor: pointer; color: var(--green-mid); }
+  .month-nav span { font-weight: 700; font-size: 16px; color: var(--green-dark); }
+
+  .summary-row { display: flex; justify-content: space-between; padding: 8px 0;
+                 border-bottom: 1px solid #eee; font-size: 14px; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row.total { font-weight: 700; font-size: 15px; padding-top: 10px;
+                       border-top: 2px solid var(--green-dark); border-bottom: none; }
+  .summary-label { color: var(--muted); }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .stat-box { background: var(--green-pale); border-radius: 10px; padding: 12px; text-align: center; }
+  .stat-box .val { font-size: 22px; font-weight: 700; color: var(--green-dark); }
+  .stat-box .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+  .stat-box.warn { background: var(--red-pale); }
+  .stat-box.warn .val { color: var(--red); }
+
+  textarea { width: 100%; font-size: 11px; font-family: monospace; border: 1px solid var(--border);
+             border-radius: 8px; padding: 10px; background: #f9f9f9; resize: none; color: var(--muted); }
+
+  .empty-state { text-align: center; padding: 32px 16px; color: var(--muted); }
+  .empty-state .big { font-size: 40px; margin-bottom: 8px; }
+
+  /* Settings */
+  .settings-flock { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .settings-flock input { flex: 1; padding: 10px 12px; border: 2px solid var(--border);
+                           border-radius: 8px; font-size: 15px; }
+  .settings-flock input:focus { outline: none; border-color: var(--green-mid); }
+  .btn-remove { background: var(--red-pale); border: none; color: var(--red);
+                border-radius: 8px; padding: 8px 12px; font-size: 16px; cursor: pointer; }
+  .btn-add { width: 100%; padding: 10px; border: 2px dashed var(--green-mid); border-radius: 10px;
+             background: none; color: var(--green-mid); font-size: 15px; font-weight: 700;
+             cursor: pointer; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div>
+      <h1>🥚 Egg Collection Log</h1>
+      <p>Anomaly Farm</p>
+    </div>
+    <div class="date-badge" id="headerDate"></div>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showPage('collect')">Collect</button>
+  <button onclick="showPage('history')">History</button>
+  <button onclick="showPage('monthly')">Monthly</button>
+  <button onclick="showPage('settings')">Settings</button>
+</nav>
+
+<!-- ════════ COLLECT ════════ -->
+<div class="page active" id="page-collect">
+
+  <div class="card">
+    <h2>Timer</h2>
+    <div class="timer-block">
+      <div class="timer-display" id="timer-display">00:00</div>
+      <button class="timer-btn start" id="timer-btn" onclick="toggleTimer()">▶ Start</button>
+      <div class="timer-manual">
+        <span>or enter minutes:</span>
+        <input type="number" id="manual-minutes" inputmode="numeric" placeholder="0" min="0" max="999">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Eggs Collected</h2>
+    <div id="flock-inputs-container"></div>
+  </div>
+
+  <div class="card">
+    <h2>Details</h2>
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="collect-date">
+    </div>
+    <button class="btn-primary" onclick="logCollection()">✓ Save Collection</button>
+  </div>
+
+</div>
+
+<!-- ════════ HISTORY ════════ -->
+<div class="page" id="page-history">
+  <div class="card">
+    <h2>Recent Collections</h2>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<!-- ════════ MONTHLY ════════ -->
+<div class="page" id="page-monthly">
+  <div class="month-nav">
+    <button onclick="changeMonth(-1)">‹</button>
+    <span id="month-label"></span>
+    <button onclick="changeMonth(1)">›</button>
+  </div>
+
+  <div class="card">
+    <h2>Monthly Summary</h2>
+    <div class="stat-grid" id="monthly-stats"></div>
+    <div id="monthly-detail"></div>
+  </div>
+
+  <div class="card">
+    <h2>Export to Tracker</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">
+      Paste these values into the Eggs tab of your Excel tracker.
+    </p>
+    <textarea id="monthly-export" rows="8" readonly onclick="this.select()"></textarea>
+    <button style="width:100%;padding:10px;background:var(--white);color:var(--green-mid);
+                   border:2px solid var(--green-mid);border-radius:10px;font-size:14px;
+                   font-weight:700;cursor:pointer;margin-top:8px" onclick="copyExport()">
+      📋 Copy to Clipboard
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>Daily Breakdown</h2>
+    <div id="monthly-daily"></div>
+  </div>
+</div>
+
+<!-- ════════ SETTINGS ════════ -->
+<div class="page" id="page-settings">
+  <div class="card">
+    <h2>Flock / Collection Areas</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
+      Name each area you collect from. Changes take effect on the next collection.
+    </p>
+    <div id="flock-settings-list"></div>
+    <button class="btn-add" onclick="addFlock()">+ Add Area</button>
+    <button class="btn-primary" style="margin-top:12px" onclick="saveFlocks()">Save</button>
+  </div>
+  <div class="card">
+    <h2>Data</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
+      Entries stored: <strong id="data-count">0</strong>
+    </p>
+    <button class="btn-danger" onclick="clearData()">🗑 Clear All Data</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── Storage ────────────────────────────────────────────────────────────────
+const STORE   = 'af_egg_log_v1';
+const FLOCKS  = 'af_egg_flocks_v1';
+
+function loadEntries() {
+  try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch(e) { return []; }
+}
+function saveEntries(e) { localStorage.setItem(STORE, JSON.stringify(e)); }
+function loadFlocks() {
+  try {
+    const f = JSON.parse(localStorage.getItem(FLOCKS));
+    return (f && f.length) ? f : ['Main Flock'];
+  } catch(e) { return ['Main Flock']; }
+}
+function saveFlocks_() { /* uses saveFlockNames below */ }
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function monthKey(d) { return d.slice(0,7); }
+function fmtDate(d) {
+  return new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+function monthLabel(k) {
+  const [y,m] = k.split('-');
+  return new Date(y,m-1,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+}
+function fmtTime(secs) {
+  const m = Math.floor(secs/60), s = secs%60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ── Timer ──────────────────────────────────────────────────────────────────
+let timerInterval = null;
+let timerSeconds  = 0;
+let timerRunning  = false;
+
+function toggleTimer() {
+  if (!timerRunning) {
+    timerRunning = true;
+    document.getElementById('timer-btn').textContent = '■ Stop';
+    document.getElementById('timer-btn').className = 'timer-btn stop';
+    document.getElementById('timer-display').classList.add('running');
+    timerInterval = setInterval(() => {
+      timerSeconds++;
+      document.getElementById('timer-display').textContent = fmtTime(timerSeconds);
+    }, 1000);
+  } else {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timer-btn').textContent = '▶ Start';
+    document.getElementById('timer-btn').className = 'timer-btn start';
+    document.getElementById('timer-display').classList.remove('running');
+    // Set manual minutes field to elapsed
+    document.getElementById('manual-minutes').value = Math.ceil(timerSeconds / 60);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false; timerSeconds = 0;
+  document.getElementById('timer-display').textContent = '00:00';
+  document.getElementById('timer-display').classList.remove('running');
+  document.getElementById('timer-btn').textContent = '▶ Start';
+  document.getElementById('timer-btn').className = 'timer-btn start';
+  document.getElementById('manual-minutes').value = '';
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach((b,i)=>{
+    b.classList.toggle('active',['collect','history','monthly','settings'][i]===name);
+  });
+  document.getElementById('page-'+name).classList.add('active');
+  if (name==='history')  renderHistory();
+  if (name==='monthly')  renderMonthly();
+  if (name==='settings') renderSettings();
+}
+
+// ── Flock inputs builder ───────────────────────────────────────────────────
+function buildFlockInputs() {
+  const flocks = loadFlocks();
+  document.getElementById('flock-inputs-container').innerHTML = flocks.map((f,i) => `
+    <div class="flock-row">
+      <div class="flock-name">📍 ${f}</div>
+      <div class="flock-inputs">
+        <div class="flock-field">
+          <label>Collected</label>
+          <input type="number" id="f-collected-${i}" inputmode="numeric"
+                 placeholder="0" min="0" step="1">
+          <div class="num-row">
+            ${[6,12,18,24,36].map(n=>`<button class="num-chip" onclick="setF('f-collected-${i}',${n})">${n}</button>`).join('')}
+          </div>
+        </div>
+        <div class="flock-field waste">
+          <label>Waste</label>
+          <input type="number" id="f-waste-${i}" inputmode="numeric"
+                 placeholder="0" min="0" step="1">
+          <div class="num-row">
+            ${[0,1,2,3].map(n=>`<button class="num-chip" onclick="setF('f-waste-${i}',${n})">${n}</button>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function setF(id, v) { document.getElementById(id).value = v; }
+
+// ── Log collection ─────────────────────────────────────────────────────────
+function logCollection() {
+  const flocks  = loadFlocks();
+  const date    = document.getElementById('collect-date').value || todayStr();
+  const minutes = parseInt(document.getElementById('manual-minutes').value) || 0;
+
+  const flockData = flocks.map((name, i) => ({
+    name,
+    collected: parseInt(document.getElementById(`f-collected-${i}`)?.value) || 0,
+    waste:     parseInt(document.getElementById(`f-waste-${i}`)?.value) || 0,
+  }));
+
+  const totalCollected = flockData.reduce((a,f)=>a+f.collected,0);
+  const totalWaste     = flockData.reduce((a,f)=>a+f.waste,0);
+
+  if (totalCollected === 0 && totalWaste === 0) {
+    toast('⚠ Enter at least one egg count'); return;
+  }
+
+  const entry = { id: Date.now(), date, minutes, flocks: flockData,
+                  totalCollected, totalWaste };
+  const entries = loadEntries();
+  entries.push(entry);
+  saveEntries(entries);
+
+  toast(`✓ Saved — ${totalCollected} eggs, ${minutes} min`);
+  resetTimer();
+  buildFlockInputs();
+  document.getElementById('collect-date').value = todayStr();
+}
+
+// ── History ────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const entries = [...loadEntries()].reverse().slice(0, 60);
+  const list = document.getElementById('history-list');
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty-state"><div class="big">🥚</div>No collections logged yet.</div>';
+    return;
+  }
+  list.innerHTML = entries.map(e => {
+    const doz = (e.totalCollected / 12).toFixed(1);
+    const wasteRate = e.totalCollected > 0
+      ? ((e.totalWaste / (e.totalCollected + e.totalWaste)) * 100).toFixed(0) + '%'
+      : '—';
+    const flockLines = (e.flocks||[]).filter(f=>f.collected>0||f.waste>0)
+      .map(f=>`${f.name}: ${f.collected} collected, ${f.waste} waste`).join(' · ');
+    return `
+      <div class="history-item">
+        <div class="history-date">${fmtDate(e.date)}</div>
+        <div class="history-stats">
+          <div class="h-stat">
+            <div class="val">${e.totalCollected}</div>
+            <div class="lbl">eggs</div>
+          </div>
+          <div class="h-stat">
+            <div class="val">${doz}</div>
+            <div class="lbl">dozens</div>
+          </div>
+          <div class="h-stat waste">
+            <div class="val">${e.totalWaste}</div>
+            <div class="lbl">waste</div>
+          </div>
+          <div class="h-stat time">
+            <div class="val">${e.minutes ? e.minutes+'m' : '—'}</div>
+            <div class="lbl">time</div>
+          </div>
+        </div>
+        ${flockLines ? `<div class="flock-detail">${flockLines}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// ── Monthly ────────────────────────────────────────────────────────────────
+let viewMonth = monthKey(todayStr());
+
+function changeMonth(dir) {
+  const [y,m] = viewMonth.split('-').map(Number);
+  viewMonth = new Date(y,m-1+dir,1).toISOString().slice(0,7);
+  renderMonthly();
+}
+
+function renderMonthly() {
+  document.getElementById('month-label').textContent = monthLabel(viewMonth);
+  const entries = loadEntries().filter(e => monthKey(e.date) === viewMonth);
+
+  const totalEggs  = entries.reduce((a,e)=>a+e.totalCollected,0);
+  const totalWaste = entries.reduce((a,e)=>a+e.totalWaste,0);
+  const totalMins  = entries.reduce((a,e)=>a+e.minutes,0);
+  const totalDoz   = (totalEggs / 12).toFixed(1);
+  const collDays   = entries.length;
+  const avgPerDay  = collDays ? (totalEggs / collDays).toFixed(1) : 0;
+  const wasteRate  = totalEggs+totalWaste > 0
+    ? ((totalWaste/(totalEggs+totalWaste))*100).toFixed(1)+'%' : '—';
+
+  document.getElementById('monthly-stats').innerHTML = `
+    <div class="stat-box"><div class="val">${totalEggs}</div><div class="lbl">Eggs Collected</div></div>
+    <div class="stat-box"><div class="val">${totalDoz}</div><div class="lbl">Dozens</div></div>
+    <div class="stat-box warn"><div class="val">${totalWaste}</div><div class="lbl">Waste</div></div>
+    <div class="stat-box"><div class="val">${totalMins}m</div><div class="lbl">Time Spent</div></div>`;
+
+  document.getElementById('monthly-detail').innerHTML = `
+    <div class="summary-row"><span class="summary-label">Collection Days</span><span>${collDays}</span></div>
+    <div class="summary-row"><span class="summary-label">Avg Eggs / Day</span><span>${avgPerDay}</span></div>
+    <div class="summary-row"><span class="summary-label">Waste Rate</span><span>${wasteRate}</span></div>
+    <div class="summary-row"><span class="summary-label">Avg Time / Day</span><span>${collDays?Math.round(totalMins/collDays):0}m</span></div>`;
+
+  // Export
+  document.getElementById('monthly-export').value = [
+    `--- Eggs Tab (${monthLabel(viewMonth)}) ---`,
+    `Dozen Eggs Collected: ${totalDoz}`,
+    `Dozen Eggs Waste/Loss: ${(totalWaste/12).toFixed(2)}`,
+    `Egg Labor Hours: ${(totalMins/60).toFixed(2)}`,
+    ``,
+    `--- Enter manually ---`,
+    `Avg Hens in Flock: [enter]`,
+    `Dozen Eggs Sold: [from Sales Log]`,
+    `Unique Customers: [from Sales Log]`,
+    `Repeat Customers: [from Sales Log]`,
+    `Gross Revenue: [from Sales Log]`,
+    `Feed Cost ($): [enter]`,
+  ].join('\n');
+
+  // Daily breakdown
+  const byDate = {};
+  entries.forEach(e => {
+    if (!byDate[e.date]) byDate[e.date] = [];
+    byDate[e.date].push(e);
+  });
+  const days = Object.keys(byDate).sort().reverse();
+  document.getElementById('monthly-daily').innerHTML = days.length ? days.map(d => {
+    const dayEntries = byDate[d];
+    const eggs  = dayEntries.reduce((a,e)=>a+e.totalCollected,0);
+    const waste = dayEntries.reduce((a,e)=>a+e.totalWaste,0);
+    const mins  = dayEntries.reduce((a,e)=>a+e.minutes,0);
+    return `<div class="summary-row">
+      <span class="summary-label">${fmtDate(d)}</span>
+      <span>${eggs} eggs · ${waste} waste · ${mins?mins+'m':'—'}</span>
+    </div>`;
+  }).join('')
+  : '<div class="empty-state" style="padding:16px 0">No data this month.</div>';
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('monthly-export').value)
+    .then(()=>toast('📋 Copied!'));
+}
+
+// ── Settings ───────────────────────────────────────────────────────────────
+function renderSettings() {
+  const flocks = loadFlocks();
+  document.getElementById('flock-settings-list').innerHTML = flocks.map((f,i) => `
+    <div class="settings-flock">
+      <input type="text" id="flock-name-${i}" value="${f}" placeholder="Area name">
+      <button class="btn-remove" onclick="removeFlock(${i})">−</button>
+    </div>`).join('');
+  document.getElementById('data-count').textContent = loadEntries().length;
+}
+
+function addFlock() {
+  const flocks = loadFlocks();
+  flocks.push('New Area');
+  localStorage.setItem(FLOCKS, JSON.stringify(flocks));
+  renderSettings();
+}
+
+function removeFlock(i) {
+  const flocks = loadFlocks();
+  if (flocks.length <= 1) { toast('⚠ Need at least one area'); return; }
+  flocks.splice(i, 1);
+  localStorage.setItem(FLOCKS, JSON.stringify(flocks));
+  renderSettings();
+}
+
+function saveFlocks() {
+  const flocks = loadFlocks();
+  const updated = flocks.map((_,i) =>
+    (document.getElementById(`flock-name-${i}`)?.value || '').trim() || `Area ${i+1}`);
+  localStorage.setItem(FLOCKS, JSON.stringify(updated));
+  buildFlockInputs();
+  toast('✓ Saved');
+}
+
+function clearData() {
+  if (!confirm('Delete all egg log data? Cannot be undone.')) return;
+  localStorage.removeItem(STORE);
+  toast('🗑 Cleared');
+  renderSettings();
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.getElementById('headerDate').textContent =
+  new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+document.getElementById('collect-date').value = todayStr();
+buildFlockInputs();
+</script>
+</body>
+</html>
