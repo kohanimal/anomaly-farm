@@ -201,6 +201,26 @@
   </div>
 
   <div class="card">
+    <h2>Personal Use</h2>
+    <div class="flock-row" style="background:var(--amber-pale)">
+      <div class="flock-name" style="color:#795900">🏠 Kept for household</div>
+      <div class="flock-field">
+        <label style="color:#795900">Eggs</label>
+        <input type="number" id="personal-use" inputmode="numeric"
+               placeholder="0" min="0" step="1"
+               style="border-color:#F9A825;background:#fff">
+        <div class="num-row">
+          <button class="num-chip" onclick="setF('personal-use',0)">0</button>
+          <button class="num-chip" onclick="setF('personal-use',6)">6</button>
+          <button class="num-chip" onclick="setF('personal-use',12)">12</button>
+          <button class="num-chip" onclick="setF('personal-use',18)">18</button>
+          <button class="num-chip" onclick="setF('personal-use',24)">24</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Details</h2>
     <div class="field">
       <label>Date</label>
@@ -402,13 +422,14 @@ function logCollection() {
 
   const totalCollected = flockData.reduce((a,f)=>a+f.collected,0);
   const totalWaste     = flockData.reduce((a,f)=>a+f.waste,0);
+  const personalUse    = parseInt(document.getElementById('personal-use').value) || 0;
 
   if (totalCollected === 0 && totalWaste === 0) {
     toast('⚠ Enter at least one egg count'); return;
   }
 
   const entry = { id: Date.now(), date, minutes, flocks: flockData,
-                  totalCollected, totalWaste };
+                  totalCollected, totalWaste, personalUse };
   const entries = loadEntries();
   entries.push(entry);
   saveEntries(entries);
@@ -416,6 +437,7 @@ function logCollection() {
   toast(`✓ Saved — ${totalCollected} eggs, ${minutes} min`);
   resetTimer();
   buildFlockInputs();
+  document.getElementById('personal-use').value = '';
   document.getElementById('collect-date').value = todayStr();
 }
 
@@ -450,6 +472,10 @@ function renderHistory() {
             <div class="val">${e.totalWaste}</div>
             <div class="lbl">waste</div>
           </div>
+          <div class="h-stat" style="background:var(--amber-pale)">
+            <div class="val" style="color:#795900">${e.personalUse || 0}</div>
+            <div class="lbl">personal</div>
+          </div>
           <div class="h-stat time">
             <div class="val">${e.minutes ? e.minutes+'m' : '—'}</div>
             <div class="lbl">time</div>
@@ -473,25 +499,32 @@ function renderMonthly() {
   document.getElementById('month-label').textContent = monthLabel(viewMonth);
   const entries = loadEntries().filter(e => monthKey(e.date) === viewMonth);
 
-  const totalEggs  = entries.reduce((a,e)=>a+e.totalCollected,0);
-  const totalWaste = entries.reduce((a,e)=>a+e.totalWaste,0);
-  const totalMins  = entries.reduce((a,e)=>a+e.minutes,0);
-  const totalDoz   = (totalEggs / 12).toFixed(1);
-  const collDays   = entries.length;
-  const avgPerDay  = collDays ? (totalEggs / collDays).toFixed(1) : 0;
-  const wasteRate  = totalEggs+totalWaste > 0
+  const totalEggs    = entries.reduce((a,e)=>a+e.totalCollected,0);
+  const totalWaste   = entries.reduce((a,e)=>a+e.totalWaste,0);
+  const totalPersonal= entries.reduce((a,e)=>a+(e.personalUse||0),0);
+  const totalMins    = entries.reduce((a,e)=>a+e.minutes,0);
+  const totalDoz     = (totalEggs / 12).toFixed(1);
+  const availForSale = Math.max(0, totalEggs - totalWaste - totalPersonal);
+  const availDoz     = (availForSale / 12).toFixed(1);
+  const collDays     = entries.length;
+  const avgPerDay    = collDays ? (totalEggs / collDays).toFixed(1) : 0;
+  const wasteRate    = totalEggs+totalWaste > 0
     ? ((totalWaste/(totalEggs+totalWaste))*100).toFixed(1)+'%' : '—';
 
   document.getElementById('monthly-stats').innerHTML = `
     <div class="stat-box"><div class="val">${totalEggs}</div><div class="lbl">Eggs Collected</div></div>
     <div class="stat-box"><div class="val">${totalDoz}</div><div class="lbl">Dozens</div></div>
     <div class="stat-box warn"><div class="val">${totalWaste}</div><div class="lbl">Waste</div></div>
-    <div class="stat-box"><div class="val">${totalMins}m</div><div class="lbl">Time Spent</div></div>`;
+    <div class="stat-box" style="background:var(--amber-pale)"><div class="val" style="color:#795900">${totalPersonal}</div><div class="lbl">Personal Use</div></div>
+    <div class="stat-box"><div class="val">${availForSale}</div><div class="lbl">Avail for Sale</div></div>
+    <div class="stat-box"><div class="val">${availDoz}</div><div class="lbl">Dozens for Sale</div></div>`;
 
   document.getElementById('monthly-detail').innerHTML = `
     <div class="summary-row"><span class="summary-label">Collection Days</span><span>${collDays}</span></div>
     <div class="summary-row"><span class="summary-label">Avg Eggs / Day</span><span>${avgPerDay}</span></div>
     <div class="summary-row"><span class="summary-label">Waste Rate</span><span>${wasteRate}</span></div>
+    <div class="summary-row"><span class="summary-label">Personal Use</span><span>${totalPersonal} eggs (${(totalPersonal/12).toFixed(1)} doz)</span></div>
+    <div class="summary-row"><span class="summary-label">Available for Sale</span><span>${availForSale} eggs · ${availDoz} doz</span></div>
     <div class="summary-row"><span class="summary-label">Avg Time / Day</span><span>${collDays?Math.round(totalMins/collDays):0}m</span></div>`;
 
   // Export
@@ -499,6 +532,8 @@ function renderMonthly() {
     `--- Eggs Tab (${monthLabel(viewMonth)}) ---`,
     `Dozen Eggs Collected: ${totalDoz}`,
     `Dozen Eggs Waste/Loss: ${(totalWaste/12).toFixed(2)}`,
+    `Dozen Eggs Personal Use: ${(totalPersonal/12).toFixed(2)}`,
+    `Dozen Eggs Avail for Sale: ${availDoz}`,
     `Egg Labor Hours: ${(totalMins/60).toFixed(2)}`,
     ``,
     `--- Enter manually ---`,
@@ -519,12 +554,13 @@ function renderMonthly() {
   const days = Object.keys(byDate).sort().reverse();
   document.getElementById('monthly-daily').innerHTML = days.length ? days.map(d => {
     const dayEntries = byDate[d];
-    const eggs  = dayEntries.reduce((a,e)=>a+e.totalCollected,0);
-    const waste = dayEntries.reduce((a,e)=>a+e.totalWaste,0);
-    const mins  = dayEntries.reduce((a,e)=>a+e.minutes,0);
+    const eggs     = dayEntries.reduce((a,e)=>a+e.totalCollected,0);
+    const waste    = dayEntries.reduce((a,e)=>a+e.totalWaste,0);
+    const personal = dayEntries.reduce((a,e)=>a+(e.personalUse||0),0);
+    const mins     = dayEntries.reduce((a,e)=>a+e.minutes,0);
     return `<div class="summary-row">
       <span class="summary-label">${fmtDate(d)}</span>
-      <span>${eggs} eggs · ${waste} waste · ${mins?mins+'m':'—'}</span>
+      <span>${eggs} eggs · ${waste} waste${personal ? ' · ' + personal + ' personal' : ''} · ${mins?mins+'m':'—'}</span>
     </div>`;
   }).join('')
   : '<div class="empty-state" style="padding:16px 0">No data this month.</div>';
