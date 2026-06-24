@@ -2,345 +2,294 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Anomaly Farm — Sales Log</title>
 <style>
   :root {
     --green-dark: #2D5016;
-    --green-mid: #4F7A28;
-    --green-light: #C6EFCE;
+    --green-mid:  #4F7A28;
+    --green-light:#C6EFCE;
     --green-pale: #EBF1DE;
-    --amber: #F9A825;
-    --red: #C62828;
-    --text: #1a1a1a;
-    --muted: #666;
-    --border: #ccc;
-    --bg: #f5f5f0;
-    --white: #fff;
-    --radius: 12px;
-    --shadow: 0 2px 8px rgba(0,0,0,0.12);
+    --amber:      #F9A825;
+    --amber-pale: #FFF8E1;
+    --red:        #C62828;
+    --red-pale:   #FFEBEE;
+    --blue:       #1565C0;
+    --blue-pale:  #E3F2FD;
+    --text:       #1a1a1a;
+    --muted:      #666;
+    --border:     #ddd;
+    --bg:         #f5f5f0;
+    --white:      #fff;
+    --radius:     12px;
+    --shadow:     0 2px 8px rgba(0,0,0,.10);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
          background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  header { background: var(--green-dark); color: #fff; padding: 16px 20px 12px;
-           position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+  header { background: var(--green-dark); color: #fff; padding: 16px 20px;
+           display: flex; justify-content: space-between; align-items: center; }
   header h1 { font-size: 18px; font-weight: 700; }
-  header p  { font-size: 12px; opacity: .75; margin-top: 2px; }
-  .header-row { display: flex; justify-content: space-between; align-items: flex-end; }
-  .date-badge { background: rgba(255,255,255,.15); border-radius: 8px;
-                padding: 4px 10px; font-size: 13px; }
+  header p  { font-size: 12px; opacity: .7; margin-top: 2px; }
 
-  nav { display: flex; background: var(--green-dark); border-top: 1px solid rgba(255,255,255,.1); }
-  nav button { flex: 1; padding: 10px 4px; background: none; border: none; color: rgba(255,255,255,.6);
-               font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
-  nav button.active { color: #fff; border-bottom: 3px solid var(--amber); }
+  nav { background: var(--green-dark); display: flex; border-top: 1px solid rgba(255,255,255,.12); }
+  nav button { flex: 1; padding: 11px 4px; background: none; border: none;
+               color: rgba(255,255,255,.6); font-size: 13px; font-weight: 600;
+               cursor: pointer; border-bottom: 3px solid transparent; }
+  nav button.active { color: #fff; border-bottom-color: var(--amber); }
 
-  .page { display: none; padding: 16px; max-width: 500px; margin: 0 auto; }
+  .page { display: none; padding: 16px; max-width: 520px; margin: 0 auto; }
   .page.active { display: block; }
 
-  .card { background: var(--white); border-radius: var(--radius); padding: 16px;
-          box-shadow: var(--shadow); margin-bottom: 16px; }
-  .card h2 { font-size: 15px; color: var(--green-dark); font-weight: 700;
-             margin-bottom: 12px; border-bottom: 2px solid var(--green-light);
-             padding-bottom: 8px; }
+  /* Cards */
+  .card { background: var(--white); border-radius: var(--radius);
+          padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card-title { font-size: 13px; font-weight: 700; color: var(--muted);
+                text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
 
-  .product-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .product-btn { padding: 14px 8px; border: 2px solid var(--border); border-radius: var(--radius);
-                 background: var(--white); cursor: pointer; text-align: center;
-                 font-size: 13px; font-weight: 600; transition: all .15s; }
-  .product-btn:active { transform: scale(.96); }
-  .product-btn.selected { border-color: var(--green-mid); background: var(--green-pale); color: var(--green-dark); }
-  .product-btn .emoji { font-size: 24px; display: block; margin-bottom: 4px; }
+  /* Toggle button groups */
+  .toggle-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toggle-btn { flex: 1; min-width: 80px; padding: 10px 8px; border: 2px solid var(--border);
+                border-radius: 10px; background: var(--white); font-size: 14px;
+                font-weight: 600; cursor: pointer; text-align: center; transition: all .15s; }
+  .toggle-btn.active { background: var(--green-mid); border-color: var(--green-mid); color: #fff; }
 
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--muted);
-                 margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
-  .field input, .field select {
-    width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px;
-    font-size: 16px; background: var(--white); color: var(--text);
-    -webkit-appearance: none; appearance: none; transition: border-color .15s; }
-  .field input:focus, .field select:focus { outline: none; border-color: var(--green-mid); }
+  /* Inputs */
+  label.field-label { display: block; font-size: 12px; font-weight: 700;
+                      color: var(--muted); text-transform: uppercase;
+                      letter-spacing: .05em; margin-bottom: 6px; margin-top: 14px; }
+  input[type=text], input[type=number] {
+    width: 100%; padding: 12px 14px; border: 2px solid var(--border);
+    border-radius: 10px; font-size: 16px; background: var(--white);
+    appearance: none; -webkit-appearance: none; }
+  input:focus { outline: none; border-color: var(--green-mid); }
+  textarea { width: 100%; padding: 10px 14px; border: 2px solid var(--border);
+             border-radius: 10px; font-size: 14px; resize: none; font-family: inherit; }
+  textarea:focus { outline: none; border-color: var(--green-mid); }
 
-  .qty-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-  .qty-chip { padding: 6px 14px; border: 2px solid var(--border); border-radius: 20px;
-              background: var(--white); cursor: pointer; font-size: 14px; font-weight: 600; }
-  .qty-chip:active { background: var(--green-pale); border-color: var(--green-mid); }
+  /* Veg product grid */
+  .veg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .veg-product { border: 2px solid var(--border); border-radius: 10px;
+                 padding: 10px; background: var(--white); }
+  .veg-product.selected { border-color: var(--green-mid); background: var(--green-pale); }
+  .veg-name { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .veg-tiers { display: flex; gap: 6px; flex-wrap: wrap; }
+  .veg-tier { padding: 6px 10px; border: 1.5px solid var(--border); border-radius: 8px;
+              font-size: 12px; font-weight: 600; cursor: pointer; background: var(--white);
+              transition: all .12s; }
+  .veg-tier.active { background: var(--green-mid); border-color: var(--green-mid); color: #fff; }
 
-  .btn-primary { width: 100%; padding: 16px; background: var(--green-mid); color: #fff;
-                 border: none; border-radius: var(--radius); font-size: 17px; font-weight: 700;
-                 cursor: pointer; margin-top: 4px; transition: background .15s; }
+  /* Primary button */
+  .btn-primary { width: 100%; padding: 14px; background: var(--green-mid);
+                 color: #fff; border: none; border-radius: 10px; font-size: 16px;
+                 font-weight: 700; cursor: pointer; margin-top: 16px; letter-spacing: .02em; }
   .btn-primary:active { background: var(--green-dark); }
-  .btn-secondary { width: 100%; padding: 12px; background: var(--white); color: var(--green-mid);
-                   border: 2px solid var(--green-mid); border-radius: var(--radius);
-                   font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-  .btn-danger { background: #fff; color: var(--red); border: 2px solid var(--red);
-                border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+  .btn-outline { padding: 8px 16px; border: 2px solid var(--border); border-radius: 8px;
+                 background: var(--white); font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-danger  { padding: 4px 10px; border: none; border-radius: 6px;
+                 background: var(--red-pale); color: var(--red); font-size: 12px;
+                 font-weight: 600; cursor: pointer; }
+  .btn-copy { padding: 10px 20px; background: var(--green-mid); color: #fff; border: none;
+              border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
 
+  /* Sale list */
+  .sale-item { display: flex; justify-content: space-between; align-items: center;
+               padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+  .sale-item:last-child { border-bottom: none; }
+  .sale-main  { font-size: 14px; font-weight: 600; }
+  .sale-meta  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .sale-price { font-size: 16px; font-weight: 700; color: var(--green-mid); white-space:nowrap; margin-left:12px; }
+
+  /* Summary row */
+  .summary-row { display: flex; justify-content: space-between;
+                 padding: 8px 0; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row.total { font-weight: 700; font-size: 16px; margin-top: 4px; }
+
+  /* Tag */
+  .tag { display: inline-block; border-radius: 10px; padding: 2px 8px;
+         font-size: 11px; font-weight: 700; }
+  .tag-green { background: var(--green-light); color: var(--green-dark); }
+  .tag-amber { background: var(--amber-pale); color: #795900; }
+  .tag-blue  { background: var(--blue-pale);  color: var(--blue); }
+  .tag-grey  { background: #eee; color: #555; }
+
+  /* Export box */
+  .export-box { background: #f8f8f8; border: 1px solid var(--border); border-radius: 8px;
+                padding: 12px; font-family: monospace; font-size: 12px; line-height: 1.6;
+                white-space: pre-wrap; word-break: break-all; max-height: 260px; overflow-y: auto; }
+  .export-section { margin-bottom: 16px; }
+  .export-section h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--muted);
+                       text-transform: uppercase; letter-spacing: .05em; }
+
+  /* Month selector */
+  .month-nav { display: flex; align-items: center; gap: 12px; justify-content: center;
+               margin-bottom: 16px; }
+  .month-nav button { padding: 6px 14px; border: 2px solid var(--border); border-radius: 8px;
+                      background: var(--white); font-size: 16px; cursor: pointer; font-weight: 700; }
+  .month-nav span { font-size: 16px; font-weight: 700; min-width: 140px; text-align: center; }
+
+  /* Empty */
+  .empty { text-align: center; padding: 32px 16px; color: var(--muted); }
+  .empty .ico { font-size: 32px; margin-bottom: 8px; }
+
+  /* Toast */
   #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-           background: var(--green-dark); color: #fff; padding: 12px 24px; border-radius: 24px;
-           font-weight: 600; font-size: 15px; transition: transform .3s; z-index: 999;
-           white-space: nowrap; box-shadow: var(--shadow); pointer-events: none; }
+           background: var(--green-dark); color: #fff; padding: 12px 22px; border-radius: 10px;
+           font-size: 14px; font-weight: 600; transition: transform .25s; z-index: 999;
+           pointer-events: none; white-space: nowrap; box-shadow: var(--shadow); }
   #toast.show { transform: translateX(-50%) translateY(0); }
 
-  .sale-item { display: flex; align-items: center; gap: 10px; padding: 10px 0;
-               border-bottom: 1px solid #eee; }
-  .sale-item:last-child { border-bottom: none; }
-  .sale-emoji { font-size: 22px; }
-  .sale-detail { flex: 1; }
-  .sale-detail strong { display: block; font-size: 14px; }
-  .sale-detail span { font-size: 12px; color: var(--muted); }
-  .sale-amount { font-weight: 700; font-size: 15px; color: var(--green-dark); }
-  .sale-delete { background: none; border: none; font-size: 18px; color: var(--border);
-                 cursor: pointer; padding: 4px; }
-
-  .summary-row { display: flex; justify-content: space-between; padding: 8px 0;
-                 border-bottom: 1px solid #eee; font-size: 14px; }
-  .summary-row:last-child { border-bottom: none; }
-  .summary-row.total { font-weight: 700; font-size: 16px; padding-top: 12px;
-                       margin-top: 4px; border-top: 2px solid var(--green-dark); border-bottom: none; }
-  .summary-label { color: var(--muted); }
-  .summary-value { font-weight: 600; }
-
-  .month-nav { display: flex; align-items: center; justify-content: space-between;
-               margin-bottom: 16px; }
-  .month-nav button { background: none; border: 2px solid var(--green-mid); border-radius: 8px;
-                      padding: 6px 14px; font-size: 16px; cursor: pointer; color: var(--green-mid); }
-  .month-nav span { font-weight: 700; font-size: 16px; color: var(--green-dark); }
-
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .stat-box { background: var(--green-pale); border-radius: 10px; padding: 12px; text-align: center; }
-  .stat-box .val { font-size: 22px; font-weight: 700; color: var(--green-dark); }
-  .stat-box .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase;
-                   letter-spacing: .04em; margin-top: 2px; }
-
-  textarea { width: 100%; font-size: 11px; font-family: monospace; border: 1px solid var(--border);
-             border-radius: 8px; padding: 10px; background: #f9f9f9; resize: none; color: var(--muted); }
-
-  .empty-state { text-align: center; padding: 32px 16px; color: var(--muted); }
-  .empty-state .big { font-size: 40px; margin-bottom: 8px; }
-
-  /* Veg product rows */
-  .veg-product-row { border: 2px solid var(--border); border-radius: var(--radius);
-                     padding: 12px 14px; margin-bottom: 10px; transition: all .15s; }
-  .veg-product-row.selected { border-color: var(--green-mid); background: var(--green-pale); }
-  .veg-product-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-  .veg-price-row { display: flex; gap: 8px; }
-  .veg-price-btn { flex: 1; padding: 10px; border: 2px solid var(--border); border-radius: 10px;
-                   background: var(--white); font-size: 14px; font-weight: 700; cursor: pointer;
-                   text-align: center; transition: all .15s; }
-  .veg-price-btn.selected { border-color: var(--green-mid); background: var(--green-dark);
-                             color: var(--white); }
-  .veg-price-btn:active { transform: scale(.96); }
+  .divider { height: 1px; background: #eee; margin: 12px 0; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-row">
-    <div>
-      <h1>🌱 Anomaly Farm</h1>
-      <p>Sales Log</p>
-    </div>
-    <div class="date-badge" id="headerDate"></div>
+  <div>
+    <h1>🌱 Anomaly Farm</h1>
+    <p>Sales Log</p>
   </div>
 </header>
 
 <nav>
-  <button class="active" onclick="showPage('log')">Log Sale</button>
+  <button class="active" onclick="showPage('log')">+ Log</button>
   <button onclick="showPage('today')">Today</button>
   <button onclick="showPage('monthly')">Monthly</button>
   <button onclick="showPage('export')">Export</button>
 </nav>
 
-<!-- ════════════════════ LOG SALE ════════════════════ -->
+<!-- ════════════════════════════ LOG SALE ════════════════════════════ -->
 <div class="page active" id="page-log">
+
   <div class="card">
-    <h2>What did you sell?</h2>
-
-    <div class="product-grid">
-      <button class="product-btn" id="btn-eggs" onclick="selectProduct('eggs')">
-        <span class="emoji">🥚</span>Eggs
-      </button>
-      <button class="product-btn" id="btn-chicken" onclick="selectProduct('chicken')">
-        <span class="emoji">🐓</span>Chicken
-      </button>
-      <button class="product-btn" id="btn-veg" onclick="selectProduct('veg')">
-        <span class="emoji">🥬</span>Veg
-      </button>
-    </div>
-
-    <!-- EGGS -->
-    <div id="fields-eggs" style="display:none">
-      <div class="field">
-        <label>Dozens Sold</label>
-        <input type="number" id="eggs-qty" inputmode="numeric" placeholder="e.g. 2" min="1" step="1">
-        <div class="qty-row">
-          <button class="qty-chip" onclick="setVal('eggs-qty',1)">1</button>
-          <button class="qty-chip" onclick="setVal('eggs-qty',2)">2</button>
-          <button class="qty-chip" onclick="setVal('eggs-qty',3)">3</button>
-          <button class="qty-chip" onclick="setVal('eggs-qty',6)">6</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Price per Dozen ($)</label>
-        <input type="number" id="eggs-price" inputmode="decimal" placeholder="6.00" step="0.25">
-        <div class="qty-row">
-          <button class="qty-chip" onclick="setVal('eggs-price',6)">$6</button>
-          <button class="qty-chip" onclick="setVal('eggs-price',7)">$7</button>
-          <button class="qty-chip" onclick="setVal('eggs-price',8)">$8</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CHICKEN -->
-    <div id="fields-chicken" style="display:none">
-      <div class="field">
-        <label>Weight Sold (lbs)</label>
-        <input type="number" id="chicken-lbs" inputmode="decimal" placeholder="e.g. 4.5" step="0.1">
-      </div>
-      <div class="field">
-        <label>Price per lb ($)</label>
-        <input type="number" id="chicken-price" inputmode="decimal" placeholder="7.00" step="0.25">
-        <div class="qty-row">
-          <button class="qty-chip" onclick="setVal('chicken-price',7)">$7</button>
-          <button class="qty-chip" onclick="setVal('chicken-price',8)">$8</button>
-          <button class="qty-chip" onclick="setVal('chicken-price',9)">$9</button>
-          <button class="qty-chip" onclick="setVal('chicken-price',10)">$10</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- VEG -->
-    <div id="fields-veg" style="display:none">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
-        Tap a price to select. Tap again to deselect. Pick multiple.
-      </p>
-      <div id="veg-products"></div>
-    </div>
-
-    <!-- Shared fields -->
-    <div id="common-fields" style="display:none">
-      <div class="field">
-        <label>Customer Name <span style="font-weight:400;text-transform:none">(optional)</span></label>
-        <input type="text" id="customer-name" placeholder="First name or nickname" autocomplete="off">
-      </div>
-      <div class="field">
-        <label>Date</label>
-        <input type="date" id="sale-date">
-      </div>
-      <div class="field">
-        <label>Location</label>
-        <select id="sale-location">
-          <option value="f3">F3 Workout</option>
-          <option value="farm">On Farm</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <button class="btn-primary" onclick="logSale()">✓ Log Sale</button>
+    <div class="card-title">Location</div>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="loc-f3"   onclick="setLoc('f3')">🏃 F3</button>
+      <button class="toggle-btn"        id="loc-farm" onclick="setLoc('farm')">🏡 On-Farm</button>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-title">Product</div>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="prod-eggs"    onclick="setProduct('eggs')">🥚 Eggs</button>
+      <button class="toggle-btn"        id="prod-chicken" onclick="setProduct('chicken')">🐓 Chicken</button>
+      <button class="toggle-btn"        id="prod-veg"     onclick="setProduct('veg')">🥬 Veg</button>
+      <button class="toggle-btn"        id="prod-flowers" onclick="setProduct('flowers')">💐 Flowers</button>
+    </div>
+  </div>
+
+  <!-- Eggs inputs -->
+  <div class="card" id="inputs-eggs">
+    <label class="field-label">Dozens</label>
+    <input type="number" id="eggs-qty" inputmode="decimal" placeholder="e.g. 2" min="0" step="0.5">
+    <label class="field-label">Price per Dozen ($)</label>
+    <input type="number" id="eggs-price" inputmode="decimal" placeholder="6.00" value="6" min="0" step="0.25">
+  </div>
+
+  <!-- Chicken inputs -->
+  <div class="card" id="inputs-chicken" style="display:none">
+    <label class="field-label">Weight (lbs)</label>
+    <input type="number" id="chicken-qty" inputmode="decimal" placeholder="e.g. 4.5" min="0" step="0.1">
+    <label class="field-label">Price per lb ($)</label>
+    <input type="number" id="chicken-price" inputmode="decimal" placeholder="7.00" value="7" min="0" step="0.25">
+  </div>
+
+  <!-- Flowers inputs -->
+  <div class="card" id="inputs-flowers" style="display:none">
+    <label class="field-label">Bouquets</label>
+    <input type="number" id="flowers-qty" inputmode="numeric" placeholder="e.g. 2" min="1" step="1">
+    <label class="field-label">Price per Bouquet ($)</label>
+    <input type="number" id="flowers-price" inputmode="decimal" placeholder="15.00" min="0" step="0.50">
+  </div>
+
+  <!-- Veg inputs -->
+  <div class="card" id="inputs-veg" style="display:none">
+    <div class="card-title">Select Product & Quantity</div>
+    <div class="veg-grid" id="veg-grid"></div>
+    <div id="veg-custom-wrap" style="display:none">
+      <label class="field-label">Custom Qty</label>
+      <input type="number" id="veg-custom-qty" inputmode="numeric" placeholder="1" min="1" step="1">
+      <label class="field-label">Custom Price ($)</label>
+      <input type="number" id="veg-custom-price" inputmode="decimal" placeholder="0.00" min="0" step="0.25">
+    </div>
+  </div>
+
+  <div class="card">
+    <label class="field-label">Customer Name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+    <input type="text" id="sale-customer" placeholder="Who bought this?" autocomplete="off" list="customer-suggestions">
+    <datalist id="customer-suggestions"></datalist>
+    <label class="field-label" style="margin-top:12px">Notes <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+    <textarea id="sale-notes" rows="2" placeholder="Event, quantity notes, etc."></textarea>
+  </div>
+
+  <button class="btn-primary" onclick="logSale()">Log Sale</button>
 </div>
 
-<!-- ════════════════════ TODAY ════════════════════ -->
+<!-- ════════════════════════════ TODAY ════════════════════════════ -->
 <div class="page" id="page-today">
-  <div class="card">
-    <h2 id="today-heading">Today's Sales</h2>
-    <div id="today-stats" class="stat-grid"></div>
-    <div id="today-list"></div>
-  </div>
+  <div id="today-content"></div>
 </div>
 
-<!-- ════════════════════ MONTHLY ════════════════════ -->
+<!-- ════════════════════════════ MONTHLY ════════════════════════════ -->
 <div class="page" id="page-monthly">
   <div class="month-nav">
     <button onclick="changeMonth(-1)">‹</button>
     <span id="month-label"></span>
     <button onclick="changeMonth(1)">›</button>
   </div>
-  <div class="card"><h2>🥚 Eggs</h2><div id="eggs-monthly"></div></div>
-  <div class="card"><h2>🐓 Chicken</h2><div id="chicken-monthly"></div></div>
-  <div class="card"><h2>🥬 Vegetables</h2><div id="veg-monthly"></div></div>
-  <div class="card"><h2>💰 Total Revenue</h2><div id="total-monthly"></div></div>
+  <div id="monthly-content"></div>
 </div>
 
-<!-- ════════════════════ EXPORT ════════════════════ -->
+<!-- ════════════════════════════ EXPORT ════════════════════════════ -->
 <div class="page" id="page-export">
-  <div class="card">
-    <h2>Export to Tracker</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
-      Copy the values below into the matching month column in your Excel tracker.
-    </p>
-    <div class="month-nav" style="margin-bottom:8px">
-      <button onclick="changeExportMonth(-1)">‹</button>
-      <span id="export-month-label"></span>
-      <button onclick="changeExportMonth(1)">›</button>
-    </div>
-
-    <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin-bottom:6px">Eggs Tab</label>
-    <textarea id="csv-eggs" rows="5" readonly onclick="this.select()"></textarea>
-
-    <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin:12px 0 6px">Chicken Tab</label>
-    <textarea id="csv-chicken" rows="4" readonly onclick="this.select()"></textarea>
-
-    <label style="font-size:13px;font-weight:700;color:var(--green-dark);display:block;margin:12px 0 6px">Veg Tab</label>
-    <textarea id="csv-veg" rows="5" readonly onclick="this.select()"></textarea>
-
-    <button class="btn-secondary" onclick="copyAll()">📋 Copy All to Clipboard</button>
-  </div>
-  <div class="card">
-    <h2>Data Management</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
-      Total entries stored: <strong id="entry-count">0</strong>
-    </p>
-    <button class="btn-danger" onclick="clearAllData()">🗑 Clear All Data</button>
-  </div>
+  <div id="export-content"></div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// ── Veg product config ─────────────────────────────────────────────────────
+// ── Constants ──────────────────────────────────────────────────────────────
+const STORE_KEY      = 'anomaly_farm_sales_v1';
+const CUSTOM_VEG_KEY = 'anomaly_farm_custom_veg_v1';
+const CUSTOM_VEG_IDS = ['custom1','custom2','custom3'];
+const CUSTOM_VEG_PRICES = [{qty:1,price:3},{qty:2,price:5}];
+
+function loadCustomVeg() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_VEG_KEY)) || ['','','']; }
+  catch(e) { return ['','','']; }
+}
+function saveCustomVegName(idx, name) {
+  const names = loadCustomVeg();
+  names[idx] = name;
+  localStorage.setItem(CUSTOM_VEG_KEY, JSON.stringify(names));
+}
+
 const VEG_PRODUCTS = [
-  { id: 'lettuce',    name: 'Lettuce Mix',  prices: [{qty:1,price:3},{qty:2,price:5}] },
-  { id: 'microgreens',name: 'Microgreens',  prices: [{qty:1,price:6},{qty:2,price:10}] },
-  { id: 'sungolds',   name: 'Sungolds',     prices: [{qty:1,price:3},{qty:2,price:5}] },
-  { id: 'slicers',    name: 'Slicers',      prices: [{qty:1,price:3},{qty:2,price:5}] },
+  { id: 'lettuce',     name: 'Lettuce Mix',  prices: [{qty:1,price:3},{qty:2,price:5}] },
+  { id: 'microgreens', name: 'Microgreens',  prices: [{qty:1,price:6},{qty:2,price:10}] },
+  { id: 'sungolds',    name: 'Sungolds',     prices: [{qty:1,price:3},{qty:2,price:5}] },
+  { id: 'slicers',     name: 'Slicers',      prices: [{qty:1,price:3},{qty:2,price:5}] },
 ];
 
-// vegSelections[productId] = {qty, price} or null
-const vegSelections = {};
+// ── State ──────────────────────────────────────────────────────────────────
+let currentLoc     = 'f3';
+let currentProduct = 'eggs';
+let selectedVeg    = null; // { vegId, qty, price }
+let viewMonth      = new Date(); // for monthly view
 
 // ── Storage ────────────────────────────────────────────────────────────────
-const STORE_KEY = 'anomaly_farm_sales_v1';
-function loadSales() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch(e) { return []; }
-}
-function saveSales(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
-function addSale(sale) {
-  const sales = loadSales();
-  sale.id = Date.now() + Math.random();
-  sales.push(sale);
-  saveSales(sales);
-}
-function deleteSale(id) { saveSales(loadSales().filter(s => s.id !== id)); }
+const load = () => { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch(e) { return []; } };
+const save = v  => localStorage.setItem(STORE_KEY, JSON.stringify(v));
+const uid  = () => Date.now() + '_' + Math.random().toString(36).slice(2);
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-function fmt$(n) { return '$' + (+n).toFixed(2); }
-function fmtDate(d) {
-  return new Date(d + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-}
-function monthKey(d) { return d.slice(0,7); }
-function monthLabel(k) {
-  const [y,m] = k.split('-');
-  return new Date(y, m-1, 1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
-}
-function todayStr() { return new Date().toISOString().slice(0,10); }
+// ── Toast ──────────────────────────────────────────────────────────────────
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
+  setTimeout(() => t.classList.remove('show'), 2000);
 }
 
 // ── Navigation ─────────────────────────────────────────────────────────────
@@ -355,303 +304,394 @@ function showPage(name) {
   if (name === 'export')  renderExport();
 }
 
-// ── Product selection ──────────────────────────────────────────────────────
-let selectedProduct = null;
-
-function selectProduct(p) {
-  selectedProduct = p;
-  document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('btn-' + p).classList.add('selected');
-  ['eggs','chicken','veg'].forEach(x =>
-    document.getElementById('fields-' + x).style.display = x === p ? 'block' : 'none');
-  document.getElementById('common-fields').style.display = 'block';
-  document.getElementById('sale-date').value = todayStr();
-  if (p === 'eggs')    document.getElementById('eggs-price').value = 6;
-  if (p === 'chicken') document.getElementById('chicken-price').value = 7;
-  if (p === 'veg')     buildVegProducts();
+// ── Location & Product selectors ────────────────────────────────────────────
+function setLoc(loc) {
+  currentLoc = loc;
+  document.getElementById('loc-f3').classList.toggle('active',   loc === 'f3');
+  document.getElementById('loc-farm').classList.toggle('active', loc === 'farm');
 }
 
-function setVal(id, v) { document.getElementById(id).value = v; }
+function setProduct(prod) {
+  currentProduct = prod;
+  ['eggs','chicken','veg','flowers'].forEach(p => {
+    document.getElementById('prod-' + p).classList.toggle('active', p === prod);
+    document.getElementById('inputs-' + p).style.display = p === prod ? 'block' : 'none';
+  });
+  if (prod === 'veg') renderVegGrid();
+}
 
-// ── Veg product builder ────────────────────────────────────────────────────
-function buildVegProducts() {
-  Object.keys(vegSelections).forEach(k => delete vegSelections[k]);
-  const container = document.getElementById('veg-products');
-  container.innerHTML = VEG_PRODUCTS.map(prod => `
-    <div class="veg-product-row" id="veg-row-${prod.id}">
-      <div class="veg-product-name">${prod.name}</div>
-      <div class="veg-price-row">
-        ${prod.prices.map((p,i) => `
-          <button type="button" class="veg-price-btn" id="veg-btn-${prod.id}-${i}"
-            onclick="selectVegPrice('${prod.id}', ${p.qty}, ${p.price}, ${i})">
-            ${p.qty} / $${p.price}
+// ── Veg grid ───────────────────────────────────────────────────────────────
+function renderVegGrid() {
+  selectedVeg = null;
+  const grid        = document.getElementById('veg-grid');
+  const customNames = loadCustomVeg();
+
+  const fixedHtml = VEG_PRODUCTS.map(vp => `
+    <div class="veg-product" id="vp-${vp.id}">
+      <div class="veg-name">${vp.name}</div>
+      <div class="veg-tiers">
+        ${vp.prices.map(t => `
+          <button class="veg-tier" onclick="selectVeg('${vp.id}',${t.qty},${t.price})">
+            ${t.qty} · $${t.price}
           </button>`).join('')}
+        <button class="veg-tier" onclick="selectVegCustom('${vp.id}')">Custom</button>
       </div>
     </div>`).join('');
+
+  const customHtml = CUSTOM_VEG_IDS.map((id, i) => `
+    <div class="veg-product" id="vp-${id}">
+      <input type="text" value="${customNames[i].replace(/"/g,'&quot;')}"
+             placeholder="Product name…"
+             style="width:100%;padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;
+                    font-size:13px;font-weight:700;margin-bottom:8px;background:transparent"
+             onchange="saveCustomVegName(${i}, this.value); document.querySelector('#vp-${id} .veg-name-label').textContent = this.value || 'Custom ${i+1}'"
+             onclick="event.stopPropagation()">
+      <div class="veg-tiers">
+        ${CUSTOM_VEG_PRICES.map(t => `
+          <button class="veg-tier" onclick="selectVeg('${id}',${t.qty},${t.price})">
+            ${t.qty} · $${t.price}
+          </button>`).join('')}
+        <button class="veg-tier" onclick="selectVegCustom('${id}')">Custom</button>
+      </div>
+    </div>`).join('');
+
+  grid.innerHTML = fixedHtml + customHtml;
+  document.getElementById('veg-custom-wrap').style.display = 'none';
 }
 
-function selectVegPrice(productId, qty, price, btnIndex) {
-  const prod = VEG_PRODUCTS.find(p => p.id === productId);
-  // Toggle: if same selection, deselect
-  if (vegSelections[productId] && vegSelections[productId].qty === qty) {
-    delete vegSelections[productId];
-    prod.prices.forEach((_,i) => {
-      const btn = document.getElementById(`veg-btn-${productId}-${i}`);
-      if (btn) { btn.classList.remove('selected'); }
-    });
-    document.getElementById(`veg-row-${productId}`).classList.remove('selected');
-    return;
-  }
-  // Select this price option
-  vegSelections[productId] = { name: prod.name, qty, price };
-  prod.prices.forEach((_,i) => {
-    const btn = document.getElementById(`veg-btn-${productId}-${i}`);
-    if (btn) btn.classList.toggle('selected', i === btnIndex);
-  });
-  document.getElementById(`veg-row-${productId}`).classList.add('selected');
+function selectVeg(vegId, qty, price) {
+  selectedVeg = { vegId, qty, price };
+  // Highlight selected card + tier
+  document.querySelectorAll('.veg-product').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.veg-tier').forEach(el => el.classList.remove('active'));
+  document.getElementById('vp-' + vegId).classList.add('selected');
+  event.target.classList.add('active');
+  document.getElementById('veg-custom-wrap').style.display = 'none';
 }
 
-// ── Log sale ───────────────────────────────────────────────────────────────
+function selectVegCustom(vegId) {
+  selectedVeg = { vegId, qty: null, price: null, custom: true };
+  document.querySelectorAll('.veg-product').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.veg-tier').forEach(el => el.classList.remove('active'));
+  document.getElementById('vp-' + vegId).classList.add('selected');
+  event.target.classList.add('active');
+  document.getElementById('veg-custom-wrap').style.display = 'block';
+  document.getElementById('veg-custom-qty').value   = '';
+  document.getElementById('veg-custom-price').value = '';
+}
+
+// ── Log Sale ───────────────────────────────────────────────────────────────
+function updateCustomerSuggestions() {
+  const sales   = load();
+  const names   = [...new Set(sales.map(s => s.customerName).filter(Boolean))].sort();
+  const dl      = document.getElementById('customer-suggestions');
+  if (dl) dl.innerHTML = names.map(n => `<option value="${n.replace(/"/g,'&quot;')}">`).join('');
+}
+
 function logSale() {
-  if (!selectedProduct) { toast('⚠ Pick a product first'); return; }
-  const date     = document.getElementById('sale-date').value || todayStr();
-  const customer = document.getElementById('customer-name').value.trim();
-  const location = document.getElementById('sale-location').value;
-  let sale = { product: selectedProduct, date, customer, location };
+  const notes        = document.getElementById('sale-notes').value.trim();
+  const customerName = document.getElementById('sale-customer').value.trim();
+  let sale = { id: uid(), ts: Date.now(), location: currentLoc, product: currentProduct, notes, customerName };
 
-  if (selectedProduct === 'eggs') {
+  if (currentProduct === 'eggs') {
     const qty   = parseFloat(document.getElementById('eggs-qty').value);
     const price = parseFloat(document.getElementById('eggs-price').value);
-    if (!qty || !price) { toast('⚠ Enter qty and price'); return; }
-    sale.qty = qty; sale.price = price;
-    sale.revenue = qty * price;
-    sale.label = `${qty} doz × ${fmt$(price)}`;
-  }
-  else if (selectedProduct === 'chicken') {
-    const lbs   = parseFloat(document.getElementById('chicken-lbs').value);
+    if (!qty || qty <= 0)  { toast('⚠ Enter dozens'); return; }
+    if (!price || price <= 0) { toast('⚠ Enter price'); return; }
+    sale.qty   = qty;
+    sale.price = price;
+    sale.total = Math.round(qty * price * 100) / 100;
+    document.getElementById('eggs-qty').value = '';
+
+  } else if (currentProduct === 'chicken') {
+    const qty   = parseFloat(document.getElementById('chicken-qty').value);
     const price = parseFloat(document.getElementById('chicken-price').value);
-    if (!lbs || !price) { toast('⚠ Enter weight and price'); return; }
-    sale.lbs = lbs; sale.price = price;
-    sale.revenue = lbs * price;
-    sale.label = `${lbs} lbs × ${fmt$(price)}/lb`;
-  }
-  else if (selectedProduct === 'veg') {
-    const items = Object.values(vegSelections).map(s => ({
-      name: s.name, qty: s.qty, price: s.price, revenue: s.price
-    }));
-    if (!items.length) { toast('⚠ Select at least one item'); return; }
-    sale.items   = items;
-    sale.revenue = items.reduce((a,it) => a + it.revenue, 0);
-    sale.label   = items.map(it => `${it.name} (${it.qty}/$${it.price})`).join(', ');
+    if (!qty || qty <= 0)  { toast('⚠ Enter weight'); return; }
+    if (!price || price <= 0) { toast('⚠ Enter price'); return; }
+    sale.qty   = qty;
+    sale.price = price;
+    sale.total = Math.round(qty * price * 100) / 100;
+    document.getElementById('chicken-qty').value = '';
+
+  } else if (currentProduct === 'veg') {
+    if (!selectedVeg) { toast('⚠ Select a product'); return; }
+    let qty, price;
+    if (selectedVeg.custom) {
+      qty   = parseFloat(document.getElementById('veg-custom-qty').value);
+      price = parseFloat(document.getElementById('veg-custom-price').value);
+      if (!qty || qty <= 0)   { toast('⚠ Enter qty'); return; }
+      if (!price || price < 0) { toast('⚠ Enter price'); return; }
+    } else {
+      qty   = selectedVeg.qty;
+      price = selectedVeg.price;
+    }
+    sale.vegId = selectedVeg.vegId;
+    sale.qty   = qty;
+    sale.price = price;
+    sale.total = Math.round(qty * price * 100) / 100;
+    renderVegGrid(); // reset selection
+
+  } else if (currentProduct === 'flowers') {
+    const qty   = parseInt(document.getElementById('flowers-qty').value);
+    const price = parseFloat(document.getElementById('flowers-price').value);
+    if (!qty || qty <= 0)    { toast('⚠ Enter bouquet count'); return; }
+    if (!price || price <= 0) { toast('⚠ Enter price per bouquet'); return; }
+    sale.qty   = qty;
+    sale.price = price;
+    sale.total = Math.round(qty * price * 100) / 100;
+    document.getElementById('flowers-qty').value = '';
   }
 
-  addSale(sale);
-  toast(`✓ Logged — ${fmt$(sale.revenue || 0)}`);
+  document.getElementById('sale-notes').value    = '';
+  document.getElementById('sale-customer').value = '';
+  const sales = load();
+  sales.push(sale);
+  save(sales);
+  updateCustomerSuggestions();
+  toast(`✓ Sale logged · $${sale.total.toFixed(2)}`);
+}
 
-  // Reset
-  document.getElementById('eggs-qty').value = '';
-  document.getElementById('eggs-price').value = '';
-  document.getElementById('chicken-lbs').value = '';
-  document.getElementById('chicken-price').value = '';
-  document.getElementById('customer-name').value = '';
-  selectedProduct = null;
-  document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('selected'));
-  ['eggs','chicken','veg'].forEach(x =>
-    document.getElementById('fields-' + x).style.display = 'none');
-  document.getElementById('common-fields').style.display = 'none';
+// ── Helpers ────────────────────────────────────────────────────────────────
+function fmtMoney(n) { return '$' + n.toFixed(2); }
+function fmtTime(ts) {
+  return new Date(ts).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+}
+function fmtDate(ts) {
+  return new Date(ts).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+}
+function vegName(id) {
+  const fixed = VEG_PRODUCTS.find(v => v.id === id);
+  if (fixed) return fixed.name;
+  const idx = CUSTOM_VEG_IDS.indexOf(id);
+  if (idx !== -1) {
+    const name = loadCustomVeg()[idx];
+    return name || `Custom ${idx + 1}`;
+  }
+  return id;
+}
+function saleLabel(s) {
+  if (s.product === 'eggs')    return `Eggs · ${s.qty} doz @ $${s.price}/doz`;
+  if (s.product === 'chicken') return `Chicken · ${s.qty} lbs @ $${s.price}/lb`;
+  if (s.product === 'veg')     return `${vegName(s.vegId)} · ${s.qty} @ $${s.price}`;
+  if (s.product === 'flowers') return `Flowers · ${s.qty} bouquet${s.qty !== 1 ? 's' : ''} @ $${s.price}/ea`;
+  return s.product;
+}
+function locLabel(l) { return l === 'f3' ? 'F3' : 'On-Farm'; }
+
+function isSameDay(ts, date) {
+  const d = new Date(ts);
+  return d.getFullYear() === date.getFullYear() &&
+         d.getMonth()    === date.getMonth() &&
+         d.getDate()     === date.getDate();
+}
+function isSameMonth(ts, date) {
+  const d = new Date(ts);
+  return d.getFullYear() === date.getFullYear() &&
+         d.getMonth()    === date.getMonth();
+}
+
+// ── Customer repeat detection ──────────────────────────────────────────────
+function isRepeatCustomer(s, allSales) {
+  if (!s.customerName) return false;
+  const n = s.customerName.toLowerCase().trim();
+  return allSales.some(other => other.id !== s.id && other.ts < s.ts &&
+    other.customerName && other.customerName.toLowerCase().trim() === n);
+}
+
+function customerTag(s, allSales) {
+  if (!s.customerName) return '';
+  const repeat = isRepeatCustomer(s, allSales);
+  return ` · <span class="tag ${repeat ? 'tag-blue' : 'tag-green'}" style="font-size:11px">${s.customerName}${repeat ? ' ↩' : ' ★'}</span>`;
+}
+
+// ── Delete sale ────────────────────────────────────────────────────────────
+function deleteSale(id) {
+  const sales = load().filter(s => s.id !== id);
+  save(sales);
+  renderToday();
+  renderMonthly();
 }
 
 // ── Today ──────────────────────────────────────────────────────────────────
 function renderToday() {
-  const today = todayStr();
-  const sales = loadSales().filter(s => s.date === today);
-  document.getElementById('today-heading').textContent = 'Today — ' + fmtDate(today);
-  const total = sales.reduce((a,s) => a + (s.revenue||0), 0);
-  document.getElementById('today-stats').innerHTML = `
-    <div class="stat-box"><div class="val">${fmt$(total)}</div><div class="lbl">Total</div></div>
-    <div class="stat-box"><div class="val">${sales.length}</div><div class="lbl">Transactions</div></div>`;
-  const list = document.getElementById('today-list');
+  const today    = new Date();
+  const allSales = load();
+  const sales    = allSales.filter(s => isSameDay(s.ts, today));
+  const el    = document.getElementById('today-content');
+
   if (!sales.length) {
-    list.innerHTML = '<div class="empty-state"><div class="big">🛒</div>No sales yet today.</div>';
+    el.innerHTML = `<div class="empty"><div class="ico">🐓</div>No sales logged today.</div>`;
     return;
   }
-  list.innerHTML = [...sales].reverse().map(s => `
-    <div class="sale-item">
-      <span class="sale-emoji">${s.product==='eggs'?'🥚':s.product==='chicken'?'🐓':'🥬'}</span>
-      <div class="sale-detail">
-        <strong>${s.label}</strong>
-        <span>${s.location==='f3'?'F3 Workout':s.location==='farm'?'On Farm':'Other'}</span>
-        ${s.customer?`<span style="display:inline-block;background:var(--green-light);color:var(--green-dark);border-radius:12px;padding:2px 8px;font-size:11px;font-weight:600;margin-top:2px">${s.customer}</span>`:''}
-      </div>
-      <span class="sale-amount">${fmt$(s.revenue||0)}</span>
-      <button class="sale-delete" onclick="deleteSaleAndRefresh(${s.id})">×</button>
-    </div>`).join('');
-}
 
-function deleteSaleAndRefresh(id) {
-  if (!confirm('Delete this entry?')) return;
-  deleteSale(id); renderToday();
+  const total   = sales.reduce((a, s) => a + s.total, 0);
+  const f3Total = sales.filter(s => s.location==='f3').reduce((a,s) => a+s.total, 0);
+  const fmTotal = sales.filter(s => s.location==='farm').reduce((a,s) => a+s.total, 0);
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-title">${today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+      <div class="summary-row"><span>F3 Sales</span><span>${fmtMoney(f3Total)}</span></div>
+      <div class="summary-row"><span>On-Farm Sales</span><span>${fmtMoney(fmTotal)}</span></div>
+      <div class="divider"></div>
+      <div class="summary-row total"><span>Total</span><span>${fmtMoney(total)}</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sales (${sales.length})</div>
+      ${sales.slice().reverse().map(s => `
+        <div class="sale-item">
+          <div>
+            <div class="sale-main">${saleLabel(s)}</div>
+            <div class="sale-meta">
+              <span class="tag ${s.location==='f3'?'tag-green':'tag-amber'}">${locLabel(s.location)}</span>
+              · ${fmtTime(s.ts)}
+              ${customerTag(s, allSales)}
+              ${s.notes ? ' · ' + s.notes : ''}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="sale-price">${fmtMoney(s.total)}</span>
+            <button class="btn-danger" onclick="deleteSale('${s.id}')">×</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
 }
 
 // ── Monthly ────────────────────────────────────────────────────────────────
-let viewMonth = monthKey(todayStr());
-
 function changeMonth(dir) {
-  const [y,m] = viewMonth.split('-').map(Number);
-  viewMonth = new Date(y, m-1+dir, 1).toISOString().slice(0,7);
+  viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + dir, 1);
   renderMonthly();
 }
 
 function renderMonthly() {
-  document.getElementById('month-label').textContent = monthLabel(viewMonth);
-  const sales = loadSales().filter(s => monthKey(s.date) === viewMonth);
+  const label    = viewMonth.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+  document.getElementById('month-label').textContent = label;
 
-  // Eggs
-  const eggS = sales.filter(s => s.product==='eggs');
-  const eggDoz = eggS.reduce((a,s)=>a+(s.qty||0),0);
-  const eggRev = eggS.reduce((a,s)=>a+s.revenue,0);
-  const eggCusts = new Set(eggS.map(s=>s.customer).filter(Boolean)).size;
-  document.getElementById('eggs-monthly').innerHTML = eggS.length ? `
-    <div class="summary-row"><span class="summary-label">Dozens Sold</span><span class="summary-value">${eggDoz}</span></div>
-    <div class="summary-row"><span class="summary-label">Avg Price/Doz</span><span class="summary-value">${eggDoz?fmt$(eggRev/eggDoz):'—'}</span></div>
-    <div class="summary-row"><span class="summary-label">Named Customers</span><span class="summary-value">${eggCusts}</span></div>
-    <div class="summary-row total"><span>Egg Revenue</span><span>${fmt$(eggRev)}</span></div>`
-    : '<div class="empty-state" style="padding:16px 0">No egg sales this month.</div>';
+  const allSales = load();
+  const sales    = allSales.filter(s => isSameMonth(s.ts, viewMonth));
+  const el    = document.getElementById('monthly-content');
 
-  // Chicken
-  const chkS = sales.filter(s => s.product==='chicken');
-  const chkLbs = chkS.reduce((a,s)=>a+(s.lbs||0),0);
-  const chkRev = chkS.reduce((a,s)=>a+s.revenue,0);
-  document.getElementById('chicken-monthly').innerHTML = chkS.length ? `
-    <div class="summary-row"><span class="summary-label">Total lbs Sold</span><span class="summary-value">${chkLbs.toFixed(1)}</span></div>
-    <div class="summary-row"><span class="summary-label">Transactions</span><span class="summary-value">${chkS.length}</span></div>
-    <div class="summary-row total"><span>Chicken Revenue</span><span>${fmt$(chkRev)}</span></div>`
-    : '<div class="empty-state" style="padding:16px 0">No chicken sales this month.</div>';
+  if (!sales.length) {
+    el.innerHTML = `<div class="empty"><div class="ico">📊</div>No sales in ${label}.</div>`;
+    return;
+  }
 
-  // Veg
-  const vegS = sales.filter(s => s.product==='veg');
-  const vegRev = vegS.reduce((a,s)=>a+(s.revenue||0),0);
-  const vegMap = {};
-  vegS.forEach(s => (s.items||[]).forEach(it => {
-    if (!vegMap[it.name]) vegMap[it.name] = {qty:0,rev:0};
-    vegMap[it.name].qty += it.qty; vegMap[it.name].rev += it.revenue;
-  }));
-  const vegRows = Object.entries(vegMap).sort((a,b)=>b[1].rev-a[1].rev)
-    .map(([n,{qty,rev}])=>`<div class="summary-row"><span class="summary-label">${n}</span><span class="summary-value">${qty} sold — ${fmt$(rev)}</span></div>`)
-    .join('');
-  document.getElementById('veg-monthly').innerHTML = vegS.length ? `
-    ${vegRows}
-    <div class="summary-row total"><span>Veg Revenue</span><span>${fmt$(vegRev)}</span></div>`
-    : '<div class="empty-state" style="padding:16px 0">No veg sales this month.</div>';
+  const total   = sales.reduce((a,s) => a+s.total, 0);
+  const byProd  = {};
+  sales.forEach(s => {
+    const k = s.product === 'veg' ? vegName(s.vegId) : s.product.charAt(0).toUpperCase()+s.product.slice(1);
+    byProd[k] = (byProd[k]||0) + s.total;
+  });
 
-  // Total
-  const totalRev = eggRev + chkRev + vegRev;
-  document.getElementById('total-monthly').innerHTML = `
-    <div class="summary-row"><span class="summary-label">🥚 Eggs</span><span class="summary-value">${fmt$(eggRev)}</span></div>
-    <div class="summary-row"><span class="summary-label">🐓 Chicken</span><span class="summary-value">${fmt$(chkRev)}</span></div>
-    <div class="summary-row"><span class="summary-label">🥬 Veg</span><span class="summary-value">${fmt$(vegRev)}</span></div>
-    <div class="summary-row total"><span>Total</span><span>${fmt$(totalRev)}</span></div>`;
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-title">Summary</div>
+      ${Object.entries(byProd).map(([k,v]) =>
+        `<div class="summary-row"><span>${k}</span><span>${fmtMoney(v)}</span></div>`
+      ).join('')}
+      <div class="divider"></div>
+      <div class="summary-row total"><span>Total</span><span>${fmtMoney(total)}</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">All Sales (${sales.length})</div>
+      ${sales.slice().reverse().map(s => `
+        <div class="sale-item">
+          <div>
+            <div class="sale-main">${saleLabel(s)}</div>
+            <div class="sale-meta">
+              <span class="tag ${s.location==='f3'?'tag-green':'tag-amber'}">${locLabel(s.location)}</span>
+              · ${fmtDate(s.ts)} ${fmtTime(s.ts)}
+              ${customerTag(s, allSales)}
+              ${s.notes ? ' · ' + s.notes : ''}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="sale-price">${fmtMoney(s.total)}</span>
+            <button class="btn-danger" onclick="deleteSale('${s.id}');renderMonthly()">×</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
 }
 
 // ── Export ─────────────────────────────────────────────────────────────────
-let exportMonth = monthKey(todayStr());
-
-function changeExportMonth(dir) {
-  const [y,m] = exportMonth.split('-').map(Number);
-  exportMonth = new Date(y, m-1+dir, 1).toISOString().slice(0,7);
-  renderExport();
-}
-
 function renderExport() {
-  document.getElementById('export-month-label').textContent = monthLabel(exportMonth);
-  const sales = loadSales().filter(s => monthKey(s.date) === exportMonth);
+  const sales = load();
+  const el    = document.getElementById('export-content');
 
-  // Eggs
-  const eggS   = sales.filter(s=>s.product==='eggs');
-  const eggDoz = eggS.reduce((a,s)=>a+(s.qty||0),0);
-  const eggRev = eggS.reduce((a,s)=>a+s.revenue,0).toFixed(2);
-  const eggCusts = new Set(eggS.map(s=>s.customer).filter(Boolean)).size;
-  const allSales = loadSales();
-  const custMonths = {};
-  allSales.filter(s=>s.product==='eggs'&&s.customer).forEach(s=>{
-    const k = s.customer.toLowerCase().trim();
-    if (!custMonths[k]) custMonths[k] = new Set();
-    custMonths[k].add(monthKey(s.date));
+  if (!sales.length) {
+    el.innerHTML = `<div class="empty"><div class="ico">📤</div>No sales to export yet.</div>`;
+    return;
+  }
+
+  // Group by month
+  const months = {};
+  sales.forEach(s => {
+    const d = new Date(s.ts);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    if (!months[key]) months[key] = [];
+    months[key].push(s);
   });
-  const eggRepeat = eggS.filter(s=>s.customer&&custMonths[s.customer.toLowerCase().trim()]?.size>1).length;
 
-  document.getElementById('csv-eggs').value = [
-    `Dozen Eggs Sold: ${eggDoz}`,
-    `Gross Revenue ($): ${eggRev}`,
-    `Unique Customers (named): ${eggCusts}`,
-    `Repeat Customers (named): ${eggRepeat}`,
-    `--- Enter manually ---`,
-    `Avg Hens in Flock: [enter]`,
-    `Dozen Eggs Collected: [enter]`,
-    `Dozen Eggs Waste: [enter]`,
-    `Feed Cost ($): [enter]`,
-    `Labor Hours: [enter]`,
-  ].join('\n');
+  let html = '';
+  Object.entries(months).sort().reverse().forEach(([key, msales]) => {
+    const [yr, mo] = key.split('-');
+    const label = new Date(parseInt(yr), parseInt(mo)-1, 1)
+      .toLocaleDateString('en-US', {month:'long', year:'numeric'});
 
-  // Chicken
-  const chkS   = sales.filter(s=>s.product==='chicken');
-  const chkLbs = chkS.reduce((a,s)=>a+(s.lbs||0),0).toFixed(1);
-  const chkRev = chkS.reduce((a,s)=>a+s.revenue,0).toFixed(2);
+    const eggDoz   = msales.filter(s=>s.product==='eggs').reduce((a,s)=>a+s.qty,0);
+    const eggRev   = msales.filter(s=>s.product==='eggs').reduce((a,s)=>a+s.total,0);
+    const ckLbs    = msales.filter(s=>s.product==='chicken').reduce((a,s)=>a+s.qty,0);
+    const ckRev    = msales.filter(s=>s.product==='chicken').reduce((a,s)=>a+s.total,0);
+    const vegRev   = msales.filter(s=>s.product==='veg').reduce((a,s)=>a+s.total,0);
+    const totalRev = msales.reduce((a,s)=>a+s.total,0);
 
-  document.getElementById('csv-chicken').value = [
-    `Revenue ($): ${chkRev}`,
-    `Total Live Weight Sold (lbs): ${chkLbs}`,
-    `--- Enter manually ---`,
-    `Birds Started: [enter]`,
-    `Birds Processed: [enter]`,
-    `Total Feed Used (lbs): [enter]`,
-    `Feed Cost ($): [enter]`,
-    `Processing Cost ($): [enter]`,
-    `Labor Hours: [enter]`,
-  ].join('\n');
+    const byVeg = {};
+    msales.filter(s=>s.product==='veg').forEach(s => {
+      const n = vegName(s.vegId);
+      if (!byVeg[n]) byVeg[n] = {qty:0, rev:0};
+      byVeg[n].qty += s.qty;
+      byVeg[n].rev += s.total;
+    });
 
-  // Veg
-  const vegS  = sales.filter(s=>s.product==='veg');
-  const vegRev = vegS.reduce((a,s)=>a+(s.revenue||0),0).toFixed(2);
-  const vegMap = {};
-  vegS.forEach(s=>(s.items||[]).forEach(it=>{
-    if (!vegMap[it.name]) vegMap[it.name]={qty:0,rev:0};
-    vegMap[it.name].qty+=it.qty; vegMap[it.name].rev+=it.revenue;
-  }));
-  const itemLines = Object.entries(vegMap).map(([n,{qty,rev}])=>`  ${n}: ${qty} units — $${rev.toFixed(2)}`).join('\n') || '  (none)';
+    const lines = [
+      `Month: ${label}`,
+      ``,
+      `EGGS`,
+      `  Dozens sold:  ${eggDoz.toFixed(1)}`,
+      `  Revenue:      $${eggRev.toFixed(2)}`,
+      ``,
+      `CHICKEN`,
+      `  Lbs sold:     ${ckLbs.toFixed(1)}`,
+      `  Revenue:      $${ckRev.toFixed(2)}`,
+      ``,
+      `VEG  (Revenue: $${vegRev.toFixed(2)})`,
+      ...Object.entries(byVeg).map(([n,d]) => `  ${n}: ${d.qty} units · $${d.rev.toFixed(2)}`),
+      ``,
+      `TOTAL REVENUE:  $${totalRev.toFixed(2)}`,
+    ].join('\n');
 
-  document.getElementById('csv-veg').value = [
-    `Gross Revenue ($): ${vegRev}`,
-    `Items sold:`,
-    itemLines,
-    `--- Enter manually ---`,
-    `Seeds & Inputs Cost ($): [enter]`,
-    `Labor Hours: [enter]`,
-    `Harvest Waste (lbs): [enter]`,
-    `Total Harvest (lbs): [enter]`,
-  ].join('\n');
+    html += `
+      <div class="export-section">
+        <h3>${label}</h3>
+        <div class="export-box" id="export-${key}">${lines}</div>
+        <button class="btn-copy" style="margin-top:8px" onclick="copyExport('${key}')">Copy</button>
+      </div>`;
+  });
 
-  document.getElementById('entry-count').textContent = loadSales().length;
+  el.innerHTML = html;
 }
 
-function copyAll() {
-  const all = ['=== EGGS ===\n'+document.getElementById('csv-eggs').value,
-               '\n=== CHICKEN ===\n'+document.getElementById('csv-chicken').value,
-               '\n=== VEG ===\n'+document.getElementById('csv-veg').value].join('\n');
-  navigator.clipboard.writeText(all).then(()=>toast('📋 Copied!'));
-}
-
-function clearAllData() {
-  if (!confirm('Delete ALL sales data? Cannot be undone.')) return;
-  localStorage.removeItem(STORE_KEY);
-  toast('🗑 All data cleared');
-  renderExport();
+function copyExport(key) {
+  const text = document.getElementById('export-' + key).textContent;
+  navigator.clipboard.writeText(text).then(() => toast('✓ Copied to clipboard'));
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────
-document.getElementById('headerDate').textContent =
-  new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-document.getElementById('sale-date').value = todayStr();
+renderVegGrid();
+updateCustomerSuggestions();
+viewMonth = new Date();
+document.getElementById('month-label').textContent =
+  viewMonth.toLocaleDateString('en-US', {month:'long', year:'numeric'});
 </script>
 </body>
 </html>
